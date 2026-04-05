@@ -1,0 +1,156 @@
+<!DOCTYPE html>
+<html lang="es">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Registro De Vehiculos</title>
+  <link rel="icon" type="image/png" href="assets/images/Logo_P.png">
+  <link rel="stylesheet" href="styles/styles.css">
+</head>
+
+<body id="vehiculos-page">
+  <main class="container">
+    <!-- Registro de vehículo -->
+    <section class="card">
+      <h2>Registro de Vehículo</h2>
+      <p class="role">Acceso: Administrador y Operador</p>
+
+      <form class="form">
+        <label>
+          Placa
+          <input type="text" placeholder="ABC-123">
+        </label>
+
+        <label>
+          Color
+          <input type="text" placeholder="Rojo">
+        </label>
+
+        <label>
+          Marca
+          <input type="text" placeholder="Toyota">
+        </label>
+
+        <label>
+          Modelo
+          <input type="text" placeholder="Corolla 2020">
+        </label>
+
+        <button type="submit">Registrar Vehículo</button>
+      </form>
+    </section>
+
+    <!-- Actualización de vehículo -->
+    <section class="card">
+      <h2>Actualizar Información del Vehículo</h2>
+      <p class="role admin">Acceso: Solo Administrador</p>
+
+      <form class="form">
+        <label>
+          Placa del vehículo
+          <input type="text" placeholder="ABC-123">
+        </label>
+
+        <label>
+          Nuevo color
+          <input type="text">
+        </label>
+
+        <label>
+          Nueva marca
+          <input type="text">
+        </label>
+
+        <label>
+          Nuevo modelo
+          <input type="text">
+        </label>
+
+        <button type="submit">Actualizar Vehículo</button>
+      </form>
+    </section>
+
+    <!-- Asignación de vehículo -->
+    <section class="card">
+      <h2>Asignar Vehículo a Usuario</h2>
+      <p class="role admin">Acceso: Solo Administrador</p>
+
+      <form class="form">
+        <label>
+          Placa del vehículo
+          <input type="text" placeholder="ABC-123">
+        </label>
+
+        <label>
+          ID del usuario
+          <input type="text" placeholder="Usuario123">
+        </label>
+
+        <button type="submit">Asignar Vehículo</button>
+      </form>
+    </section>
+
+    <!-- Restricciones pico y placa -->
+    <section class="card">
+      <h2>Restricciones Pico y Placa</h2>
+      <p class="role">Acceso: Administrador y Operador</p>
+
+      <form class="form">
+        <label>
+          Día de la semana
+          <select>
+            <option>Lunes</option>
+            <option>Martes</option>
+            <option>Miércoles</option>
+            <option>Jueves</option>
+            <option>Viernes</option>
+          </select>
+        </label>
+
+        <label>
+          Último dígito de placa
+          <input type="number" min="0" max="9">
+        </label>
+
+        <button type="submit">Agregar Restricción</button>
+      </form>
+
+      <table class="table">
+        <thead>
+          <tr>
+            <th>Día</th>
+            <th>Dígito restringido</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td>Lunes</td>
+            <td>1 y 7</td>
+          </tr>
+          <tr>
+            <td>Martes</td>
+            <td>0 y 3</td>
+          </tr>
+          <tr>
+            <td>Miércoles</td>
+            <td>4 y 6</td>
+          </tr>
+          <tr>
+            <td>Jueves</td>
+            <td>5 y 9</td>
+          </tr>
+          <tr>
+            <td>Viernes</td>
+            <td>2 y 8</td>
+          </tr>
+        </tbody>
+      </table>
+    </section>
+
+  </main>
+  <!-- Header compartido -->
+  <script src="js/load-header.js"></script>
+</body>
+
+</html>

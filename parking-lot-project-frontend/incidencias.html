@@ -1,0 +1,72 @@
+<!DOCTYPE html>
+<html lang="es">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Reporte de Incidencias | Parqueadero</title>
+    <link rel="icon" type="image/jpg" href="assets/images/Logo_P.png">
+    <link rel="stylesheet" href="styles/styles.css">
+</head>
+
+<body id="incidencias-page">
+    <main class="container">
+        <header class="header">
+            <h1>Reporte de Incidencias</h1>
+            <p>Registro de eventos ocurridos dentro del parqueadero</p>
+        </header>
+
+        <section class="card">
+            <form class="incident-form">
+
+                <div class="form-group">
+                    <label for="codigo">Código de incidencia</label>
+                    <input type="text" id="codigo" value="INC-000001" readonly>
+                    <small>Este código es generado automáticamente por el sistema</small>
+                </div>
+
+                <div class="form-group">
+                    <label for="vehiculo">Vehículo afectado</label>
+                    <input type="text" id="vehiculo" placeholder="Ej: Placa ABC-123" required>
+                </div>
+
+                <div class="form-row">
+                    <div class="form-group">
+                        <label for="fecha">Fecha</label>
+                        <input type="date" id="fecha" required>
+                    </div>
+
+                    <div class="form-group">
+                        <label for="hora">Hora</label>
+                        <input type="time" id="hora" required>
+                    </div>
+                </div>
+
+                <div class="form-group">
+                    <label for="tipo">Tipo de incidencia</label>
+                    <select id="tipo" required>
+                        <option value="">Seleccione una opción</option>
+                        <option value="rayones">Rayones</option>
+                        <option value="choques">Choques</option>
+                        <option value="atropellamientos">Atropellamientos</option>
+                        <option value="golpes">Golpes contra muros</option>
+                    </select>
+                </div>
+
+                <div class="form-group">
+                    <label for="descripcion">Descripción adicional (opcional)</label>
+                    <textarea id="descripcion" placeholder="Detalles relevantes de la incidencia"></textarea>
+                </div>
+
+                <div class="form-actions">
+                    <button type="submit">Registrar incidencia</button>
+                </div>
+
+            </form>
+        </section>
+    </main>
+    <!-- Header compartido -->
+    <script src="js/load-header.js"></script>
+</body>
+
+</html>

@@ -1,0 +1,347 @@
+<!doctype html>
+<html lang="es">
+
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Reportes - Administrador | Parqueadero</title>
+  <link rel="icon" type="image/png" href="assets/images/Logo_P.png" />
+  <link rel="stylesheet" href="styles/styles.css" />
+</head>
+
+<body id="informes-page">
+  <div class="layout">
+    <main class="content">
+      <header class="content-header">
+        <h1>Listado de Usuarios</h1>
+        <p>Reporte exclusivo para administrador</p>
+      </header>
+
+      <section class="filters">
+        <div class="filter-group">
+          <label for="fecha">Fecha</label>
+          <input type="date" id="fecha" />
+        </div>
+        <div class="filter-group">
+          <label for="buscar">Buscar</label>
+          <input type="text" id="buscar" placeholder="Nombre, placa, cédula..." />
+        </div>
+        <button class="btn-primary">Generar reporte</button>
+      </section>
+
+      <nav class="tabs-nav">
+        <button class="tab-btn active" data-tab="usuarios">Usuarios</button>
+        <button class="tab-btn" data-tab="vehiculos">Vehículos</button>
+        <button class="tab-btn" data-tab="entradas">Entradas</button>
+        <button class="tab-btn" data-tab="salidas">Salidas</button>
+        <button class="tab-btn" data-tab="incidencias">Incidencias</button>
+        <button class="tab-btn" data-tab="restricciones">
+          Restricciones
+        </button>
+        <button class="tab-btn" data-tab="ocupacion">Ocupación</button>
+        <button class="tab-btn" data-tab="celdas">Celdas</button>
+        <button class="tab-btn" data-tab="frecuencia">Frecuencia</button>
+        <button class="tab-btn" data-tab="horarios">Horarios</button>
+      </nav>
+
+      <!-- USUARIOS -->
+      <div class="tab-panel active" id="tab-usuarios">
+        <div class="table-container">
+          <table>
+            <thead>
+              <tr>
+                <th>ID</th>
+                <th>Nombre</th>
+                <th>Cédula</th>
+                <th>Email</th>
+                <th>Teléfono</th>
+                <th>Rol</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr>
+                <td>001</td>
+                <td>Maradona Gutierrez</td>
+                <td>123456789</td>
+                <td>eldiego69@gmail.com</td>
+                <td>3009876543</td>
+                <td>Cliente</td>
+              </tr>
+              <tr>
+                <td>002</td>
+                <td>Amparo no Grisales</td>
+                <td>987654321</td>
+                <td>amparito@gmail.com</td>
+                <td>3001234567</td>
+                <td>Cliente</td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+      </div>
+
+      <!-- VEHÍCULOS -->
+      <div class="tab-panel" id="tab-vehiculos">
+        <div class="table-container">
+          <table>
+            <thead>
+              <tr>
+                <th>Placa</th>
+                <th>Marca</th>
+                <th>Modelo</th>
+                <th>Color</th>
+                <th>Tipo de vehículo</th>
+                <th>ID Propietario</th>
+                <th>Nombre Propietario</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr>
+                <td>ABC123</td>
+                <td>Chevrolet</td>
+                <td>Onix</td>
+                <td>Rojo</td>
+                <td>Carro</td>
+                <td>001</td>
+                <td>Maradona Gutierrez</td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+      </div>
+
+      <!-- ENTRADAS -->
+      <div class="tab-panel" id="tab-entradas">
+        <div class="table-container">
+          <table>
+            <thead>
+              <tr>
+                <th>ID Entrada</th>
+                <th>Placa</th>
+                <th>Tipo de vehículo</th>
+                <th>Fecha Ingreso</th>
+                <th>Hora Ingreso</th>
+                <th>Celda Asignada</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr>
+                <td>1001</td>
+                <td>ABC123</td>
+                <td>Carro</td>
+                <td>2024-06-01</td>
+                <td>08:30</td>
+                <td>A1</td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+      </div>
+
+      <!-- SALIDAS -->
+      <div class="tab-panel" id="tab-salidas">
+        <div class="table-container">
+          <table>
+            <thead>
+              <tr>
+                <th>ID Salida</th>
+                <th>Placa</th>
+                <th>Tipo de vehículo</th>
+                <th>Fecha Salida</th>
+                <th>Hora Salida</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr>
+                <td>2001</td>
+                <td>ABC123</td>
+                <td>Carro</td>
+                <td>2024-06-01</td>
+                <td>12:45</td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+      </div>
+
+      <!-- INCIDENCIAS -->
+      <div class="tab-panel" id="tab-incidencias">
+        <div class="table-container">
+          <table>
+            <thead>
+              <tr>
+                <th>ID Incidencia</th>
+                <th>Fecha</th>
+                <th>Hora</th>
+                <th>Placa</th>
+                <th>Descripción</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr>
+                <td>3001</td>
+                <td>2024-06-01</td>
+                <td>10:15</td>
+                <td>ABC123</td>
+                <td>Pinchazo en la rueda delantera izquierda</td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+      </div>
+
+      <!-- RESTRICCIONES -->
+      <div class="tab-panel" id="tab-restricciones">
+        <div class="table-container">
+          <table>
+            <thead>
+              <tr>
+                <th>Fecha</th>
+                <th>Placa</th>
+                <th>Restricción</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr>
+                <td>2024-06-01</td>
+                <td>XYZ789</td>
+                <td>Pico y placa</td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+      </div>
+
+      <!-- OCUPACIÓN -->
+      <div class="tab-panel" id="tab-ocupacion">
+        <div class="table-container">
+          <table>
+            <thead>
+              <tr>
+                <th>Fecha</th>
+                <th>Total Celdas</th>
+                <th>Celdas Ocupadas</th>
+                <th>Celdas Libres</th>
+                <th>Ocupación</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr>
+                <td>2024-06-01</td>
+                <td>40</td>
+                <td>10</td>
+                <td>30</td>
+                <td>
+                  <div class="occ-bar-wrap">
+                    <div class="occ-bar">
+                      <div class="occ-bar-fill" style="width: 25%"></div>
+                    </div>
+                    <span>25%</span>
+                  </div>
+                </td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+      </div>
+
+      <!-- CELDAS -->
+      <div class="tab-panel" id="tab-celdas">
+        <div class="table-container">
+          <table>
+            <thead>
+              <tr>
+                <th>Número de Celda</th>
+                <th>Sector</th>
+                <th>Cantidad de Usos</th>
+                <th>Tiempo Ocupación</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr>
+                <td>A1</td>
+                <td>Sector 1</td>
+                <td>5</td>
+                <td>10 horas</td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+      </div>
+
+      <!-- FRECUENCIA -->
+      <div class="tab-panel" id="tab-frecuencia">
+        <div class="table-container">
+          <table>
+            <thead>
+              <tr>
+                <th>Placa</th>
+                <th>Propietario</th>
+                <th>Cantidad de Ingresos</th>
+                <th>Tiempo Promedio de Uso</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr>
+                <td>ABC123</td>
+                <td>Maradona Gutierrez</td>
+                <td>3</td>
+                <td>4 horas</td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+      </div>
+
+      <!-- HORARIOS -->
+      <div class="tab-panel" id="tab-horarios">
+        <div class="table-container">
+          <table>
+            <thead>
+              <tr>
+                <th>Día</th>
+                <th>Franja Horaria</th>
+                <th>% de Ocupación</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr>
+                <td>Lunes</td>
+                <td>08:00 - 12:00</td>
+                <td>
+                  <div class="occ-bar-wrap">
+                    <div class="occ-bar">
+                      <div class="occ-bar-fill" style="width: 75%"></div>
+                    </div>
+                    <span>75%</span>
+                  </div>
+                </td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+      </div>
+    </main>
+  </div>
+
+  <script>
+    document.querySelectorAll(".tab-btn").forEach((btn) => {
+      btn.addEventListener("click", () => {
+        document
+          .querySelectorAll(".tab-btn")
+          .forEach((b) => b.classList.remove("active"));
+        document
+          .querySelectorAll(".tab-panel")
+          .forEach((p) => p.classList.remove("active"));
+        btn.classList.add("active");
+        document
+          .getElementById("tab-" + btn.dataset.tab)
+          .classList.add("active");
+      });
+    });
+  </script>
+  <!-- Header compartido -->
+  <script src="js/load-header.js"></script>
+</body>
+
+</html>

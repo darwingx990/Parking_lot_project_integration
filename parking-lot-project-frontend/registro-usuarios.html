@@ -1,0 +1,190 @@
+<!doctype html>
+<html lang="es">
+
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Registro de usuarios</title>
+  <link
+    href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@300;400;500;600&family=DM+Mono:wght@400;500&display=swap"
+    rel="stylesheet" />
+  <link rel="stylesheet" href="styles/styles.css" />
+  <link rel="icon" type="image/png" href="assets/images/Logo_P.png" />
+</head>
+
+<body id="usuarios-page">
+  <div class="container">
+    <header>
+      <div class="accent-bar"></div>
+      <h1>Gestión de usuarios</h1>
+      <p>Administra, asigna y actualiza usuarios del sistema</p>
+    </header>
+
+    <nav class="tabs-nav" role="tablist">
+      <button class="tab-btn active" role="tab" onclick="switchTab('registro', this)">
+        Registro
+      </button>
+      <button class="tab-btn" role="tab" onclick="switchTab('vehiculo', this)">
+        Asignar vehículo
+      </button>
+      <button class="tab-btn" role="tab" onclick="switchTab('actualizar', this)">
+        Actualizar estado
+      </button>
+    </nav>
+
+    <div class="tab-panel active" id="tab-registro">
+      <div class="card">
+        <h2>Registrar nuevo usuario</h2>
+        <form onsubmit="return false;">
+          <div class="form-grid">
+            <div class="form-group full">
+              <label>Tipo de documento</label>
+              <select required>
+                <option value="">Seleccione</option>
+                <option>Cédula de ciudadanía</option>
+                <option>Cédula extranjera</option>
+                <option>Tarjeta de identidad</option>
+                <option>Pasaporte</option>
+              </select>
+            </div>
+            <div class="form-group full">
+              <label>Número de documento</label>
+              <input type="number" placeholder="Ej. 1234567890" required />
+            </div>
+            <div class="form-group">
+              <label>Primer nombre</label>
+              <input type="text" placeholder="Felipe" required />
+            </div>
+            <div class="form-group">
+              <label>Segundo nombre</label>
+              <input type="text" placeholder="Andrés" />
+            </div>
+            <div class="form-group">
+              <label>Primer apellido</label>
+              <input type="text" placeholder="Marín" required />
+            </div>
+            <div class="form-group">
+              <label>Segundo apellido</label>
+              <input type="text" placeholder="Torres" />
+            </div>
+            <div class="form-group full">
+              <label>Correo electrónico</label>
+              <input type="email" placeholder="usuario@correo.com" required />
+            </div>
+            <div class="form-group">
+              <label>Número de celular</label>
+              <input type="tel" placeholder="300 000 0000" required />
+            </div>
+            <div class="form-group">
+              <label>Tipo de usuario</label>
+              <select required>
+                <option value="">Seleccione</option>
+                <option>Administrador</option>
+                <option>Operador</option>
+                <option>Usuario</option>
+              </select>
+            </div>
+            <div class="form-group full">
+              <label>Foto de perfil</label>
+              <input type="file" accept="image/*" />
+            </div>
+          </div>
+          <button type="submit" class="btn btn-primary" style="margin-top: 24px">
+            Registrar usuario
+          </button>
+        </form>
+      </div>
+    </div>
+
+    <div class="tab-panel" id="tab-vehiculo">
+      <div class="card">
+        <h2>Asignar vehículo a usuario</h2>
+        <p class="info-note">
+          Selecciona un usuario registrado e ingresa la placa del vehículo a
+          asignar.
+        </p>
+        <form onsubmit="return false;">
+          <div class="form-grid">
+            <div class="form-group full">
+              <label>Seleccionar usuario</label>
+              <select required>
+                <option value="">Selección de usuario</option>
+                <option>Felipe Marín</option>
+                <option>Darwing Mosquera</option>
+              </select>
+            </div>
+            <div class="form-group full">
+              <label>Placa del vehículo</label>
+              <input type="text" placeholder="Ej. ABC-123" required />
+            </div>
+          </div>
+          <button type="submit" class="btn btn-primary" style="margin-top: 24px">
+            Asignar vehículo
+          </button>
+        </form>
+      </div>
+    </div>
+
+    <div class="tab-panel" id="tab-actualizar">
+      <div class="card">
+        <h2>Actualizar estado de usuario</h2>
+        <p class="info-note">
+          Cambia el estado de un usuario entre Activo e Inactivo.
+        </p>
+        <form onsubmit="return false;">
+          <div class="form-grid">
+            <div class="form-group full">
+              <label>Seleccionar usuario</label>
+              <select required>
+                <option value="">Selección de usuario</option>
+                <option>Felipe Marín</option>
+                <option>Darwing Mosquera</option>
+              </select>
+            </div>
+            <div class="form-group full">
+              <label>Estado</label>
+              <select required id="estado-select" onchange="updateBadge(this)">
+                <option value="">Seleccione</option>
+                <option value="activo">Activo</option>
+                <option value="inactivo">Inactivo</option>
+              </select>
+            </div>
+          </div>
+          <button type="submit" class="btn btn-primary" style="margin-top: 24px">
+            Actualizar usuario
+          </button>
+        </form>
+      </div>
+    </div>
+  </div>
+
+  <script>
+    function switchTab(name, btn) {
+      document
+        .querySelectorAll(".tab-panel")
+        .forEach((p) => p.classList.remove("active"));
+      document
+        .querySelectorAll(".tab-btn")
+        .forEach((b) => b.classList.remove("active"));
+      document.getElementById("tab-" + name).classList.add("active");
+      btn.classList.add("active");
+    }
+
+    function updateBadge(select) {
+      const existing = document.querySelector(".status-hint");
+      if (existing) existing.remove();
+      if (!select.value) return;
+      const badge = document.createElement("span");
+      badge.className =
+        "status-hint " + (select.value === "activo" ? "active" : "inactive");
+      badge.textContent =
+        select.value === "activo" ? "● Activo" : "● Inactivo";
+      select.parentElement.appendChild(badge);
+    }
+  </script>
+
+  <!-- Header compartido -->
+  <script src="js/load-header.js"></script>
+</body>
+
+</html>

@@ -1,0 +1,1102 @@
+{
+	"info": {
+		"_postman_id": "parking-lot-api",
+		"name": "Parking Lot API",
+		"description": "Colección de endpoints para probar la API del sistema de parqueadero",
+		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
+	},
+	"variable": [
+		{
+			"key": "baseUrl",
+			"value": "http://localhost:3000/api"
+		}
+	],
+	"item": [
+		{
+			"name": "Raíz",
+			"item": [
+				{
+					"name": "Health Check",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "http://localhost:3000/",
+							"host": ["localhost:3000"],
+							"path": []
+						}
+					},
+					"response": []
+				}
+			]
+		},
+		{
+			"name": "Pico y Placa",
+			"item": [
+				{
+					"name": "GET - Obtener todos",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{baseUrl}}/pico-placa",
+							"host": ["{{baseUrl}}"],
+							"path": ["pico-placa"]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "GET - Obtener por ID",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{baseUrl}}/pico-placa/1",
+							"host": ["{{baseUrl}}"],
+							"path": ["pico-placa", "1"]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "POST - Crear",
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n    \"tipoVehiculo\": \"Carro\",\n    \"numero\": \"1\",\n    \"dia\": \"Lunes\"\n}"
+						},
+						"url": {
+							"raw": "{{baseUrl}}/pico-placa",
+							"host": ["{{baseUrl}}"],
+							"path": ["pico-placa"]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "PUT - Actualizar",
+					"request": {
+						"method": "PUT",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n    \"tipoVehiculo\": \"Moto\",\n    \"numero\": \"9\",\n    \"dia\": \"Viernes\"\n}"
+						},
+						"url": {
+							"raw": "{{baseUrl}}/pico-placa/1",
+							"host": ["{{baseUrl}}"],
+							"path": ["pico-placa", "1"]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "DELETE - Eliminar",
+					"request": {
+						"method": "DELETE",
+						"header": [],
+						"url": {
+							"raw": "{{baseUrl}}/pico-placa/1",
+							"host": ["{{baseUrl}}"],
+							"path": ["pico-placa", "1"]
+						}
+					},
+					"response": []
+				}
+			]
+		},
+		{
+			"name": "Usuarios",
+			"item": [
+				{
+					"name": "GET - Obtener todos",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{baseUrl}}/usuarios",
+							"host": ["{{baseUrl}}"],
+							"path": ["usuarios"]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "GET - Obtener por ID",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{baseUrl}}/usuarios/1",
+							"host": ["{{baseUrl}}"],
+							"path": ["usuarios", "1"]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "GET - Obtener por documento",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{baseUrl}}/usuarios/documento/651684841",
+							"host": ["{{baseUrl}}"],
+							"path": ["usuarios", "documento", "651684841"]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "POST - Crear",
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n    \"tipoDocumento\": \"CC\",\n    \"numeroDocumento\": \"123456789\",\n    \"primerNombre\": \"Juan\",\n    \"segundoNombre\": \"Carlos\",\n    \"primerApellido\": \"Perez\",\n    \"segundoApellido\": \"Gomez\",\n    \"direccionCorreo\": \"juan.perez@email.com\",\n    \"numeroCelular\": \"3001234567\",\n    \"fotoPerfil\": \"img/juan.jpg\",\n    \"estado\": \"activo\",\n    \"perfilId\": 3\n}"
+						},
+						"url": {
+							"raw": "{{baseUrl}}/usuarios",
+							"host": ["{{baseUrl}}"],
+							"path": ["usuarios"]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "PUT - Actualizar",
+					"request": {
+						"method": "PUT",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n    \"primerNombre\": \"Juan Pablo\",\n    \"numeroCelular\": \"3009876543\"\n}"
+						},
+						"url": {
+							"raw": "{{baseUrl}}/usuarios/1",
+							"host": ["{{baseUrl}}"],
+							"path": ["usuarios", "1"]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "DELETE - Eliminar",
+					"request": {
+						"method": "DELETE",
+						"header": [],
+						"url": {
+							"raw": "{{baseUrl}}/usuarios/1",
+							"host": ["{{baseUrl}}"],
+							"path": ["usuarios", "1"]
+						}
+					},
+					"response": []
+				}
+			]
+		},
+		{
+			"name": "Administradores",
+			"item": [
+				{
+					"name": "GET - Obtener todos",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{baseUrl}}/administradores",
+							"host": ["{{baseUrl}}"],
+							"path": ["administradores"]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "GET - Obtener por ID",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{baseUrl}}/administradores/2",
+							"host": ["{{baseUrl}}"],
+							"path": ["administradores", "2"]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "POST - Crear",
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n    \"tipoDocumento\": \"CC\",\n    \"numeroDocumento\": \"987654321\",\n    \"primerNombre\": \"Admin\",\n    \"primerApellido\": \"Principal\",\n    \"direccionCorreo\": \"admin@email.com\",\n    \"numeroCelular\": \"3101234567\",\n    \"estado\": \"activo\"\n}"
+						},
+						"url": {
+							"raw": "{{baseUrl}}/administradores",
+							"host": ["{{baseUrl}}"],
+							"path": ["administradores"]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "PUT - Actualizar",
+					"request": {
+						"method": "PUT",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n    \"primerNombre\": \"Admin Actualizado\"\n}"
+						},
+						"url": {
+							"raw": "{{baseUrl}}/administradores/2",
+							"host": ["{{baseUrl}}"],
+							"path": ["administradores", "2"]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "DELETE - Eliminar",
+					"request": {
+						"method": "DELETE",
+						"header": [],
+						"url": {
+							"raw": "{{baseUrl}}/administradores/2",
+							"host": ["{{baseUrl}}"],
+							"path": ["administradores", "2"]
+						}
+					},
+					"response": []
+				}
+			]
+		},
+		{
+			"name": "Operadores",
+			"item": [
+				{
+					"name": "GET - Obtener todos",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{baseUrl}}/operadores",
+							"host": ["{{baseUrl}}"],
+							"path": ["operadores"]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "GET - Obtener por ID",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{baseUrl}}/operadores/4",
+							"host": ["{{baseUrl}}"],
+							"path": ["operadores", "4"]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "POST - Crear",
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n    \"tipoDocumento\": \"CC\",\n    \"numeroDocumento\": \"555555555\",\n    \"primerNombre\": \"Operador\",\n    \"primerApellido\": \"Test\",\n    \"direccionCorreo\": \"operador@email.com\",\n    \"numeroCelular\": \"3201234567\",\n    \"estado\": \"activo\"\n}"
+						},
+						"url": {
+							"raw": "{{baseUrl}}/operadores",
+							"host": ["{{baseUrl}}"],
+							"path": ["operadores"]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "PUT - Actualizar",
+					"request": {
+						"method": "PUT",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n    \"primerNombre\": \"Operador Nuevo\"\n}"
+						},
+						"url": {
+							"raw": "{{baseUrl}}/operadores/4",
+							"host": ["{{baseUrl}}"],
+							"path": ["operadores", "4"]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "DELETE - Eliminar",
+					"request": {
+						"method": "DELETE",
+						"header": [],
+						"url": {
+							"raw": "{{baseUrl}}/operadores/4",
+							"host": ["{{baseUrl}}"],
+							"path": ["operadores", "4"]
+						}
+					},
+					"response": []
+				}
+			]
+		},
+		{
+			"name": "Vehículos",
+			"item": [
+				{
+					"name": "GET - Obtener todos",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{baseUrl}}/vehiculo",
+							"host": ["{{baseUrl}}"],
+							"path": ["vehiculo"]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "GET - Obtener por ID",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{baseUrl}}/vehiculo/1",
+							"host": ["{{baseUrl}}"],
+							"path": ["vehiculo", "1"]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "GET - Obtener por placa",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{baseUrl}}/vehiculo/placa/ABC123",
+							"host": ["{{baseUrl}}"],
+							"path": ["vehiculo", "placa", "ABC123"]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "GET - Obtener por usuario",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{baseUrl}}/vehiculo/usuario/1",
+							"host": ["{{baseUrl}}"],
+							"path": ["vehiculo", "usuario", "1"]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "POST - Crear",
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n    \"placa\": \"XYZ789\",\n    \"color\": \"Negro\",\n    \"modelo\": \"2023\",\n    \"marca\": \"Toyota\",\n    \"tipo\": \"Carro\",\n    \"usuarioId\": 1\n}"
+						},
+						"url": {
+							"raw": "{{baseUrl}}/vehiculo",
+							"host": ["{{baseUrl}}"],
+							"path": ["vehiculo"]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "PUT - Actualizar",
+					"request": {
+						"method": "PUT",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n    \"color\": \"Blanco\",\n    \"modelo\": \"2024\"\n}"
+						},
+						"url": {
+							"raw": "{{baseUrl}}/vehiculo/1",
+							"host": ["{{baseUrl}}"],
+							"path": ["vehiculo", "1"]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "DELETE - Eliminar",
+					"request": {
+						"method": "DELETE",
+						"header": [],
+						"url": {
+							"raw": "{{baseUrl}}/vehiculo/1",
+							"host": ["{{baseUrl}}"],
+							"path": ["vehiculo", "1"]
+						}
+					},
+					"response": []
+				}
+			]
+		},
+		{
+			"name": "Acceso y Salidas",
+			"item": [
+				{
+					"name": "GET - Obtener todos",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{baseUrl}}/acceso-salida",
+							"host": ["{{baseUrl}}"],
+							"path": ["acceso-salida"]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "GET - Obtener por ID",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{baseUrl}}/acceso-salida/1",
+							"host": ["{{baseUrl}}"],
+							"path": ["acceso-salida", "1"]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "GET - Obtener por vehículo",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{baseUrl}}/acceso-salida/vehiculo/1",
+							"host": ["{{baseUrl}}"],
+							"path": ["acceso-salida", "vehiculo", "1"]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "POST - Crear entrada",
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n    \"movimiento\": \"Entrada\",\n    \"fechaHora\": \"2026-04-02T10:00:00\",\n    \"puerta\": \"Puerta 1\",\n    \"tiempoEstadia\": 0,\n    \"vehiculoId\": 1\n}"
+						},
+						"url": {
+							"raw": "{{baseUrl}}/acceso-salida",
+							"host": ["{{baseUrl}}"],
+							"path": ["acceso-salida"]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "POST - Crear salida",
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n    \"movimiento\": \"Salida\",\n    \"fechaHora\": \"2026-04-02T12:30:00\",\n    \"puerta\": \"Puerta 2\",\n    \"tiempoEstadia\": 9000,\n    \"vehiculoId\": 1\n}"
+						},
+						"url": {
+							"raw": "{{baseUrl}}/acceso-salida",
+							"host": ["{{baseUrl}}"],
+							"path": ["acceso-salida"]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "PUT - Actualizar",
+					"request": {
+						"method": "PUT",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n    \"tiempoEstadia\": 7200\n}"
+						},
+						"url": {
+							"raw": "{{baseUrl}}/acceso-salida/1",
+							"host": ["{{baseUrl}}"],
+							"path": ["acceso-salida", "1"]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "DELETE - Eliminar",
+					"request": {
+						"method": "DELETE",
+						"header": [],
+						"url": {
+							"raw": "{{baseUrl}}/acceso-salida/1",
+							"host": ["{{baseUrl}}"],
+							"path": ["acceso-salida", "1"]
+						}
+					},
+					"response": []
+				}
+			]
+		},
+		{
+			"name": "Incidencias",
+			"item": [
+				{
+					"name": "GET - Obtener todos (requiere rol)",
+					"request": {
+						"method": "GET",
+						"header": [
+							{
+								"key": "rol",
+								"value": "administrador"
+							}
+						],
+						"url": {
+							"raw": "{{baseUrl}}/incidencia",
+							"host": ["{{baseUrl}}"],
+							"path": ["incidencia"]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "GET - Obtener por ID (requiere rol)",
+					"request": {
+						"method": "GET",
+						"header": [
+							{
+								"key": "rol",
+								"value": "administrador"
+							}
+						],
+						"url": {
+							"raw": "{{baseUrl}}/incidencia/1",
+							"host": ["{{baseUrl}}"],
+							"path": ["incidencia", "1"]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "POST - Crear (Admin/Operador)",
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							},
+							{
+								"key": "rol",
+								"value": "administrador"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n    \"nombre\": \"Daño en celda\"\n}"
+						},
+						"url": {
+							"raw": "{{baseUrl}}/incidencia",
+							"host": ["{{baseUrl}}"],
+							"path": ["incidencia"]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "PUT - Actualizar (Admin/Operador)",
+					"request": {
+						"method": "PUT",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							},
+							{
+								"key": "rol",
+								"value": "administrador"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n    \"nombre\": \"Daño en celda actualizado\"\n}"
+						},
+						"url": {
+							"raw": "{{baseUrl}}/incidencia/1",
+							"host": ["{{baseUrl}}"],
+							"path": ["incidencia", "1"]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "DELETE - Eliminar (Solo Admin)",
+					"request": {
+						"method": "DELETE",
+						"header": [
+							{
+								"key": "rol",
+								"value": "administrador"
+							}
+						],
+						"url": {
+							"raw": "{{baseUrl}}/incidencia/1",
+							"host": ["{{baseUrl}}"],
+							"path": ["incidencia", "1"]
+						}
+					},
+					"response": []
+				}
+			]
+		},
+		{
+			"name": "Reportes de Incidencia",
+			"item": [
+				{
+					"name": "GET - Obtener todos",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{baseUrl}}/reportes-incidencia",
+							"host": ["{{baseUrl}}"],
+							"path": ["reportes-incidencia"]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "GET - Obtener por vehículo",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{baseUrl}}/reportes-incidencia/vehiculo/1",
+							"host": ["{{baseUrl}}"],
+							"path": ["reportes-incidencia", "vehiculo", "1"]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "GET - Obtener por ID compuesto",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{baseUrl}}/reportes-incidencia/1/10",
+							"host": ["{{baseUrl}}"],
+							"path": ["reportes-incidencia", "1", "10"]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "POST - Crear",
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n    \"vehiculoId\": 1,\n    \"incidenciaId\": 1,\n    \"fechaHora\": \"2026-04-02T10:30:00\"\n}"
+						},
+						"url": {
+							"raw": "{{baseUrl}}/reportes-incidencia",
+							"host": ["{{baseUrl}}"],
+							"path": ["reportes-incidencia"]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "PUT - Actualizar (por ID compuesto)",
+					"request": {
+						"method": "PUT",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n    \"fechaHora\": \"2026-04-02T11:00:00\"\n}"
+						},
+						"url": {
+							"raw": "{{baseUrl}}/reportes-incidencia/1/10",
+							"host": ["{{baseUrl}}"],
+							"path": ["reportes-incidencia", "1", "10"]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "DELETE - Eliminar (por ID compuesto)",
+					"request": {
+						"method": "DELETE",
+						"header": [],
+						"url": {
+							"raw": "{{baseUrl}}/reportes-incidencia/1/10",
+							"host": ["{{baseUrl}}"],
+							"path": ["reportes-incidencia", "1", "10"]
+						}
+					},
+					"response": []
+				}
+			]
+		},
+		{
+			"name": "Historial de Parqueo",
+			"item": [
+				{
+					"name": "GET - Obtener todos",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{baseUrl}}/historial-parqueo",
+							"host": ["{{baseUrl}}"],
+							"path": ["historial-parqueo"]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "GET - Obtener por vehículo",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{baseUrl}}/historial-parqueo/vehiculo/1",
+							"host": ["{{baseUrl}}"],
+							"path": ["historial-parqueo", "vehiculo", "1"]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "GET - Obtener por celda",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{baseUrl}}/historial-parqueo/celda/1",
+							"host": ["{{baseUrl}}"],
+							"path": ["historial-parqueo", "celda", "1"]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "GET - Obtener por ID compuesto",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{baseUrl}}/historial-parqueo/1/1",
+							"host": ["{{baseUrl}}"],
+							"path": ["historial-parqueo", "1", "1"]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "POST - Crear",
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n    \"celdaId\": 1,\n    \"vehiculoId\": 1,\n    \"fechaHora\": \"2026-04-02T10:00:00\"\n}"
+						},
+						"url": {
+							"raw": "{{baseUrl}}/historial-parqueo",
+							"host": ["{{baseUrl}}"],
+							"path": ["historial-parqueo"]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "PUT - Actualizar (por ID compuesto)",
+					"request": {
+						"method": "PUT",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n    \"fechaHora\": \"2026-04-02T12:00:00\"\n}"
+						},
+						"url": {
+							"raw": "{{baseUrl}}/historial-parqueo/1/1",
+							"host": ["{{baseUrl}}"],
+							"path": ["historial-parqueo", "1", "1"]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "DELETE - Eliminar (por ID compuesto)",
+					"request": {
+						"method": "DELETE",
+						"header": [],
+						"url": {
+							"raw": "{{baseUrl}}/historial-parqueo/1/1",
+							"host": ["{{baseUrl}}"],
+							"path": ["historial-parqueo", "1", "1"]
+						}
+					},
+					"response": []
+				}
+			]
+		},
+		{
+			"name": "Celdas (GetEstado)",
+			"item": [
+				{
+					"name": "GET - Obtener todos",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{baseUrl}}/get-estado",
+							"host": ["{{baseUrl}}"],
+							"path": ["get-estado"]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "GET - Obtener por ID",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{baseUrl}}/get-estado/1",
+							"host": ["{{baseUrl}}"],
+							"path": ["get-estado", "1"]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "GET - Obtener por tipo",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{baseUrl}}/get-estado/tipo/Carro",
+							"host": ["{{baseUrl}}"],
+							"path": ["get-estado", "tipo", "Carro"]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "GET - Obtener celda libre por tipo",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{baseUrl}}/get-estado/libre/Carro",
+							"host": ["{{baseUrl}}"],
+							"path": ["get-estado", "libre", "Carro"]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "POST - Crear celda",
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n    \"tipo\": \"Carro\",\n    \"estado\": \"Libre\"\n}"
+						},
+						"url": {
+							"raw": "{{baseUrl}}/get-estado",
+							"host": ["{{baseUrl}}"],
+							"path": ["get-estado"]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "PUT - Actualizar",
+					"request": {
+						"method": "PUT",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n    \"estado\": \"Ocupada\"\n}"
+						},
+						"url": {
+							"raw": "{{baseUrl}}/get-estado/1",
+							"host": ["{{baseUrl}}"],
+							"path": ["get-estado", "1"]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "PATCH - Ocupar celda",
+					"request": {
+						"method": "PATCH",
+						"header": [],
+						"url": {
+							"raw": "{{baseUrl}}/get-estado/1/ocupar",
+							"host": ["{{baseUrl}}"],
+							"path": ["get-estado", "1", "ocupar"]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "PATCH - Liberar celda",
+					"request": {
+						"method": "PATCH",
+						"header": [],
+						"url": {
+							"raw": "{{baseUrl}}/get-estado/1/liberar",
+							"host": ["{{baseUrl}}"],
+							"path": ["get-estado", "1", "liberar"]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "DELETE - Eliminar",
+					"request": {
+						"method": "DELETE",
+						"header": [],
+						"url": {
+							"raw": "{{baseUrl}}/get-estado/1",
+							"host": ["{{baseUrl}}"],
+							"path": ["get-estado", "1"]
+						}
+					},
+					"response": []
+				}
+			]
+		}
+	]
+}
