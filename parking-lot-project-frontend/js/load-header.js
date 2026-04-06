@@ -3,6 +3,11 @@
  * Inserta el contenido de header.html al inicio del <body>.
  */
 document.addEventListener("DOMContentLoaded", function () {
+    if (typeof api === 'undefined') {
+        console.warn('API no cargada, saltando header');
+        return;
+    }
+
     fetch("header.html")
         .then(function (response) {
             return response.text();
@@ -11,11 +16,13 @@ document.addEventListener("DOMContentLoaded", function () {
             var headerContainer = document.createElement("div");
             headerContainer.innerHTML = html;
 
-            // Insertar el header al inicio del body
-            document.body.insertBefore(
-                headerContainer.firstElementChild,
-                document.body.firstChild
-            );
+            var headerElement = headerContainer.firstElementChild;
+            if (headerElement) {
+                document.body.insertBefore(
+                    headerElement,
+                    document.body.firstChild
+                );
+            }
         })
         .catch(function (error) {
             console.error("Error al cargar el header:", error);

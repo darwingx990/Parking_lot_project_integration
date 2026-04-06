@@ -1,38 +1,56 @@
 <!doctype html>
 <html lang="es">
-  <head>
+<head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>Usuario</title>
+    <title>BioParking - Usuario</title>
     <link rel="stylesheet" href="styles/styles.css" />
     <link rel="icon" type="image/png" href="assets/images/Logo_P.png" />
-  </head>
-  <body id="login-page">
+    <script src="js/api.js"></script>
+</head>
+<body id="login-page">
     <div class="login-container">
-      <img
-        src="assets/images/bioparking_transparente.png"
-        alt="BioParking Logo"
-        class="login-logo"
-      />
-      <h2>Usuario</h2>
-      <form>
-        <div class="input-group">
-          <span class="icon">🪪</span>
-          <input type="text" placeholder="Documento" required />
-        </div>
-
-        <a href="olvidaste_contraseña.html" class="forgot"
-          >¿Olvidaste tu contraseña?</a
-        >
-        <a href="registro-usuarios.html" class="Crear-cuenta">Crear cuenta</a>
-        <nav>
-          <ul>
-            <a href="login.html" class="Crear-cuenta">Ingresar como administrador</a>
-          </ul>
-        </nav>
-
-        <button type="submit" class="btn-login">Login</button>
-      </form>
+        <img src="assets/images/bioparking_transparente.png" alt="BioParking Logo" class="login-logo" />
+        <h2>Usuario</h2>
+        <form id="loginForm">
+            <div class="input-group">
+                <span class="icon">🪪</span>
+                <input type="text" id="documento" placeholder="Documento" required />
+            </div>
+            <div class="input-group">
+                <span class="icon">🔒</span>
+                <input type="password" id="clave" placeholder="Contraseña" required />
+            </div>
+            <a href="olvidaste_contraseña.html" class="forgot">¿Olvidaste tu contraseña?</a>
+            <a href="registro-usuarios.html" class="Crear-cuenta">Crear cuenta</a>
+            <nav>
+                <ul>
+                    <a href="login.html" class="Crear-cuenta">Ingresar como administrador</a>
+                </ul>
+            </nav>
+            <button type="submit" class="btn-login">Login</button>
+        </form>
     </div>
-  </body>
+
+    <script>
+        document.getElementById('loginForm').addEventListener('submit', async (e) => {
+            e.preventDefault();
+            
+            const documento = document.getElementById('documento').value;
+            const clave = document.getElementById('clave').value;
+
+            try {
+                const user = await api.login(documento, clave);
+                showNotification(`Bienvenido ${user.nombre}`, 'success');
+                window.location.href = 'index.html';
+            } catch (error) {
+                showNotification(error.message, 'error');
+            }
+        });
+
+        if (api.isAuthenticated()) {
+            window.location.href = 'index.html';
+        }
+    </script>
+</body>
 </html>

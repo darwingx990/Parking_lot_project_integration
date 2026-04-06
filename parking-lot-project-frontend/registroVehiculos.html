@@ -4,153 +4,380 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Registro De Vehiculos</title>
+  <title>Gestión de Vehículos | BioParking</title>
   <link rel="icon" type="image/png" href="assets/images/Logo_P.png">
   <link rel="stylesheet" href="styles/styles.css">
+  <script src="js/api.js"></script>
 </head>
 
 <body id="vehiculos-page">
   <main class="container">
-    <!-- Registro de vehículo -->
     <section class="card">
       <h2>Registro de Vehículo</h2>
       <p class="role">Acceso: Administrador y Operador</p>
 
-      <form class="form">
+      <form id="form-registro-vehiculo" class="form">
         <label>
           Placa
-          <input type="text" placeholder="ABC-123">
+          <input type="text" id="vehiculo-placa" placeholder="ABC123" required>
         </label>
 
         <label>
           Color
-          <input type="text" placeholder="Rojo">
+          <input type="text" id="vehiculo-color" placeholder="Rojo" required>
         </label>
 
         <label>
           Marca
-          <input type="text" placeholder="Toyota">
+          <input type="text" id="vehiculo-marca" placeholder="Toyota" required>
         </label>
 
         <label>
           Modelo
-          <input type="text" placeholder="Corolla 2020">
+          <input type="text" id="vehiculo-modelo" placeholder="2024" required>
+        </label>
+
+        <label>
+          Tipo
+          <select id="vehiculo-tipo" required>
+            <option value="">Seleccione</option>
+            <option value="Carro">Carro</option>
+            <option value="Moto">Moto</option>
+          </select>
+        </label>
+
+        <label>
+          ID Usuario (propietario)
+          <input type="number" id="vehiculo-usuario" placeholder="1" required>
         </label>
 
         <button type="submit">Registrar Vehículo</button>
       </form>
     </section>
 
-    <!-- Actualización de vehículo -->
     <section class="card">
       <h2>Actualizar Información del Vehículo</h2>
       <p class="role admin">Acceso: Solo Administrador</p>
 
-      <form class="form">
+      <form id="form-actualizar-vehiculo" class="form">
         <label>
           Placa del vehículo
-          <input type="text" placeholder="ABC-123">
+          <select id="actualizar-placa-select" required onchange="cargarDatosVehiculo(this)">
+            <option value="">Seleccione un vehículo</option>
+          </select>
         </label>
 
         <label>
           Nuevo color
-          <input type="text">
+          <input type="text" id="nuevo-color" placeholder="Nuevo color">
         </label>
 
         <label>
           Nueva marca
-          <input type="text">
+          <input type="text" id="nueva-marca" placeholder="Nueva marca">
         </label>
 
         <label>
           Nuevo modelo
-          <input type="text">
+          <input type="text" id="nuevo-modelo" placeholder="Nuevo modelo">
         </label>
 
         <button type="submit">Actualizar Vehículo</button>
       </form>
     </section>
 
-    <!-- Asignación de vehículo -->
     <section class="card">
-      <h2>Asignar Vehículo a Usuario</h2>
-      <p class="role admin">Acceso: Solo Administrador</p>
+      <h2>Lista de Vehículos</h2>
+      <p class="role">Ver vehículos registrados</p>
 
-      <form class="form">
-        <label>
-          Placa del vehículo
-          <input type="text" placeholder="ABC-123">
-        </label>
+      <div style="margin-bottom: 16px;">
+        <input type="text" id="buscar-vehiculo" placeholder="Buscar por placa..." 
+               style="padding: 8px; border-radius: 4px; border: 1px solid #CBD5E1; width: 100%; max-width: 300px;"
+               oninput="filtrarVehiculos()" />
+      </div>
 
-        <label>
-          ID del usuario
-          <input type="text" placeholder="Usuario123">
-        </label>
-
-        <button type="submit">Asignar Vehículo</button>
-      </form>
+      <div class="table-container">
+        <table class="table">
+          <thead>
+            <tr>
+              <th>Placa</th>
+              <th>Marca</th>
+              <th>Modelo</th>
+              <th>Color</th>
+              <th>Tipo</th>
+              <th>Acciones</th>
+            </tr>
+          </thead>
+          <tbody id="vehiculos-body">
+            <tr><td colspan="6" style="text-align: center;">Cargando...</td></tr>
+          </tbody>
+        </table>
+      </div>
     </section>
 
-    <!-- Restricciones pico y placa -->
     <section class="card">
       <h2>Restricciones Pico y Placa</h2>
       <p class="role">Acceso: Administrador y Operador</p>
 
-      <form class="form">
+      <form id="form-pico-placa" class="form">
         <label>
-          Día de la semana
-          <select>
-            <option>Lunes</option>
-            <option>Martes</option>
-            <option>Miércoles</option>
-            <option>Jueves</option>
-            <option>Viernes</option>
+          Tipo de vehículo
+          <select id="pp-tipo" required>
+            <option value="">Seleccione</option>
+            <option value="Carro">Carro</option>
+            <option value="Moto">Moto</option>
           </select>
         </label>
 
         <label>
-          Último dígito de placa
-          <input type="number" min="0" max="9">
+          Día de la semana
+          <select id="pp-dia" required>
+            <option value="">Seleccione</option>
+            <option value="Lunes">Lunes</option>
+            <option value="Martes">Martes</option>
+            <option value="Miércoles">Miércoles</option>
+            <option value="Jueves">Jueves</option>
+            <option value="Viernes">Viernes</option>
+            <option value="Sábado">Sábado</option>
+            <option value="Domingo">Domingo</option>
+          </select>
+        </label>
+
+        <label>
+          Último dígito de placa restringido
+          <select id="pp-digito" required>
+            <option value="">Seleccione</option>
+            <option value="0">0</option>
+            <option value="1">1</option>
+            <option value="2">2</option>
+            <option value="3">3</option>
+            <option value="4">4</option>
+            <option value="5">5</option>
+            <option value="6">6</option>
+            <option value="7">7</option>
+            <option value="8">8</option>
+            <option value="9">9</option>
+          </select>
         </label>
 
         <button type="submit">Agregar Restricción</button>
       </form>
 
-      <table class="table">
-        <thead>
-          <tr>
-            <th>Día</th>
-            <th>Dígito restringido</th>
-          </tr>
-        </thead>
-        <tbody>
-          <tr>
-            <td>Lunes</td>
-            <td>1 y 7</td>
-          </tr>
-          <tr>
-            <td>Martes</td>
-            <td>0 y 3</td>
-          </tr>
-          <tr>
-            <td>Miércoles</td>
-            <td>4 y 6</td>
-          </tr>
-          <tr>
-            <td>Jueves</td>
-            <td>5 y 9</td>
-          </tr>
-          <tr>
-            <td>Viernes</td>
-            <td>2 y 8</td>
-          </tr>
-        </tbody>
-      </table>
+      <div style="margin-top: 20px;">
+        <h3 style="margin-bottom: 10px;">Restricciones activas</h3>
+        <div class="table-container">
+          <table class="table">
+            <thead>
+              <tr>
+                <th>Tipo</th>
+                <th>Día</th>
+                <th>Dígito</th>
+                <th>Acciones</th>
+              </tr>
+            </thead>
+            <tbody id="pico-placa-body">
+              <tr><td colspan="4" style="text-align: center;">Cargando...</td></tr>
+            </tbody>
+          </table>
+        </div>
+      </div>
     </section>
 
   </main>
-  <!-- Header compartido -->
+
   <script src="js/load-header.js"></script>
+  
+  <script>
+    let vehiculosCache = [];
+    let picoPlacaCache = [];
+
+    async function cargarVehiculos() {
+      try {
+        vehiculosCache = await api.vehiculos.getAll();
+        renderizarTablaVehiculos(vehiculosCache);
+        
+        const select = document.getElementById('actualizar-placa-select');
+        select.innerHTML = '<option value="">Seleccione un vehículo</option>';
+        vehiculosCache.forEach(v => {
+          select.innerHTML += `<option value="${v.id}">${v.placa} - ${v.marca}</option>`;
+        });
+      } catch (error) {
+        console.error('Error:', error);
+      }
+    }
+
+    function filtrarVehiculos() {
+      const texto = document.getElementById('buscar-vehiculo').value.toLowerCase();
+      const filtrados = vehiculosCache.filter(v => 
+        v.placa.toLowerCase().includes(texto) || 
+        v.marca.toLowerCase().includes(texto)
+      );
+      renderizarTablaVehiculos(filtrados);
+    }
+
+    function renderizarTablaVehiculos(vehiculos) {
+      const tbody = document.getElementById('vehiculos-body');
+      
+      if (vehiculos.length === 0) {
+        tbody.innerHTML = '<tr><td colspan="6" style="text-align: center;">No hay vehículos</td></tr>';
+        return;
+      }
+
+      tbody.innerHTML = vehiculos.map(v => `
+        <tr>
+          <td><strong>${v.placa}</strong></td>
+          <td>${v.marca}</td>
+          <td>${v.modelo}</td>
+          <td>${v.color}</td>
+          <td>${v.tipo}</td>
+          <td>
+            <button onclick="eliminarVehiculo(${v.id})" style="background: var(--error); color: white; border: none; padding: 5px 10px; border-radius: 4px; cursor: pointer; font-size: 12px;">
+              Eliminar
+            </button>
+          </td>
+        </tr>
+      `).join('');
+    }
+
+    async function cargarDatosVehiculo(select) {
+      const vehiculo = vehiculosCache.find(v => v.id == select.value);
+      if (vehiculo) {
+        document.getElementById('nuevo-color').value = vehiculo.color;
+        document.getElementById('nueva-marca').value = vehiculo.marca;
+        document.getElementById('nuevo-modelo').value = vehiculo.modelo;
+      }
+    }
+
+    async function eliminarVehiculo(id) {
+      if (!confirm('¿Está seguro de eliminar este vehículo?')) return;
+      
+      try {
+        await api.vehiculos.delete(id);
+        showNotification('Vehículo eliminado', 'success');
+        cargarVehiculos();
+      } catch (error) {
+        showNotification(error.message || 'Error al eliminar', 'error');
+      }
+    }
+
+    document.getElementById('form-registro-vehiculo').addEventListener('submit', async (e) => {
+      e.preventDefault();
+      
+      const data = {
+        placa: document.getElementById('vehiculo-placa').value.toUpperCase(),
+        color: document.getElementById('vehiculo-color').value,
+        marca: document.getElementById('vehiculo-marca').value,
+        modelo: document.getElementById('vehiculo-modelo').value,
+        tipo: document.getElementById('vehiculo-tipo').value,
+        usuarioId: parseInt(document.getElementById('vehiculo-usuario').value)
+      };
+
+      try {
+        await api.vehiculos.create(data);
+        showNotification('Vehículo registrado exitosamente', 'success');
+        document.getElementById('form-registro-vehiculo').reset();
+        cargarVehiculos();
+      } catch (error) {
+        showNotification(error.message || 'Error al registrar', 'error');
+      }
+    });
+
+    document.getElementById('form-actualizar-vehiculo').addEventListener('submit', async (e) => {
+      e.preventDefault();
+      
+      const vehiculoId = document.getElementById('actualizar-placa-select').value;
+      const data = {};
+      
+      const color = document.getElementById('nuevo-color').value;
+      const marca = document.getElementById('nueva-marca').value;
+      const modelo = document.getElementById('nuevo-modelo').value;
+      
+      if (color) data.color = color;
+      if (marca) data.marca = marca;
+      if (modelo) data.modelo = modelo;
+
+      if (Object.keys(data).length === 0) {
+        showNotification('No hay cambios para actualizar', 'info');
+        return;
+      }
+
+      try {
+        await api.vehiculos.update(vehiculoId, data);
+        showNotification('Vehículo actualizado', 'success');
+        document.getElementById('form-actualizar-vehiculo').reset();
+        cargarVehiculos();
+      } catch (error) {
+        showNotification(error.message || 'Error al actualizar', 'error');
+      }
+    });
+
+    async function cargarPicoPlaca() {
+      try {
+        picoPlacaCache = await api.picoPlaca.getAll();
+        renderizarTablaPicoPlaca(picoPlacaCache);
+      } catch (error) {
+        console.error('Error:', error);
+      }
+    }
+
+    function renderizarTablaPicoPlaca(reglas) {
+      const tbody = document.getElementById('pico-placa-body');
+      
+      if (reglas.length === 0) {
+        tbody.innerHTML = '<tr><td colspan="4" style="text-align: center;">No hay restricciones</td></tr>';
+        return;
+      }
+
+      tbody.innerHTML = reglas.map(r => `
+        <tr>
+          <td>${r.tipoVehiculo}</td>
+          <td>${r.dia}</td>
+          <td><strong>${r.numero}</strong></td>
+          <td>
+            <button onclick="eliminarPicoPlaca(${r.id})" style="background: var(--error); color: white; border: none; padding: 5px 10px; border-radius: 4px; cursor: pointer; font-size: 12px;">
+              Eliminar
+            </button>
+          </td>
+        </tr>
+      `).join('');
+    }
+
+    async function eliminarPicoPlaca(id) {
+      if (!confirm('¿Eliminar esta restricción?')) return;
+      
+      try {
+        await api.picoPlaca.delete(id);
+        showNotification('Restricción eliminada', 'success');
+        cargarPicoPlaca();
+      } catch (error) {
+        showNotification(error.message || 'Error al eliminar', 'error');
+      }
+    }
+
+    document.getElementById('form-pico-placa').addEventListener('submit', async (e) => {
+      e.preventDefault();
+      
+      const data = {
+        tipoVehiculo: document.getElementById('pp-tipo').value,
+        dia: document.getElementById('pp-dia').value,
+        numero: document.getElementById('pp-digito').value
+      };
+
+      try {
+        await api.picoPlaca.create(data);
+        showNotification('Restricción agregada', 'success');
+        document.getElementById('form-pico-placa').reset();
+        cargarPicoPlaca();
+      } catch (error) {
+        showNotification(error.message || 'Error al agregar', 'error');
+      }
+    });
+
+    document.addEventListener('DOMContentLoaded', () => {
+      cargarVehiculos();
+      cargarPicoPlaca();
+    });
+  </script>
 </body>
 
 </html>

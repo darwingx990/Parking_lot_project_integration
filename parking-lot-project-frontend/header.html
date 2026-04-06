@@ -11,22 +11,84 @@
                     <ul class="submenu">
                         <li><a href="incidencias.html">Incidencias</a></li>
                         <li><a href="informes.html">Informes</a></li>
-                        <li>
-                            <a href="registro-usuarios.html">Registro de Usuarios</a>
-                        </li>
-                        <li>
-                            <a href="registroVehiculos.html">Registro de Vehículos</a>
-                        </li>
-                        <li>
-                            <a href="registro-accesos.html">Registro de Accesos</a>
-                        </li>
-                        <li>
-                            <a href="index.html">Disponibilidad</a>
-                        </li>
+                        <li><a href="registro-usuarios.html">Registro de Usuarios</a></li>
+                        <li><a href="registroVehiculos.html">Registro de Vehículos</a></li>
+                        <li><a href="registro-accesos.html">Registro de Accesos</a></li>
+                        <li><a href="index.html">Disponibilidad</a></li>
                     </ul>
                 </li>
-                <li><a href="login.html">Iniciar sesión</a></li>
+                <li id="auth-section">
+                    <a href="login.html" id="login-link">Iniciar sesión</a>
+                </li>
             </ul>
         </nav>
     </div>
+
+    <style>
+        .user-menu {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+        }
+        .user-info {
+            display: flex;
+            flex-direction: column;
+            align-items: flex-end;
+        }
+        .user-name {
+            font-size: 13px;
+            font-weight: 600;
+            color: var(--morado);
+        }
+        .user-role {
+            font-size: 11px;
+            color: var(--texto-muted);
+        }
+        .btn-logout {
+            background: var(--error);
+            color: white;
+            border: none;
+            padding: 8px 16px;
+            border-radius: 6px;
+            cursor: pointer;
+            font-size: 12px;
+            font-weight: 500;
+        }
+        .btn-logout:hover {
+            background: #b91c1c;
+        }
+    </style>
+
+    <script>
+        function updateHeaderAuth() {
+            const authSection = document.getElementById('auth-section');
+            const user = api.getCurrentUser();
+
+            if (user) {
+                authSection.innerHTML = `
+                    <div class="user-menu">
+                        <div class="user-info">
+                            <span class="user-name">${user.nombre}</span>
+                            <span class="user-role">${user.rol}</span>
+                        </div>
+                        <button class="btn-logout" onclick="logout()">Cerrar sesión</button>
+                    </div>
+                `;
+            } else {
+                authSection.innerHTML = '<a href="login.html">Iniciar sesión</a>';
+            }
+        }
+
+        function logout() {
+            api.logout();
+            showNotification('Sesión cerrada', 'info');
+            window.location.href = 'login.html';
+        }
+
+        if (typeof api !== 'undefined') {
+            updateHeaderAuth();
+        }
+
+        document.addEventListener('DOMContentLoaded', updateHeaderAuth);
+    </script>
 </header>
