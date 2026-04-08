@@ -1359,3 +1359,203 @@ header nav ul {
 #vehiculos-page .table th {
   background-color: var(--lavanda-mid);
 }
+
+#perfil-page {
+  font-family: "DM Sans", sans-serif;
+  background: var(--fondo);
+  color: var(--texto-oscuro);
+  min-height: 100vh;
+}
+
+#perfil-page .container {
+  max-width: 640px;
+  margin: 0 auto;
+  padding: 48px 24px;
+}
+
+#perfil-page .container header {
+  margin-bottom: 40px;
+  background: none;
+  border-bottom: none;
+  padding: 0;
+}
+
+#perfil-page .container header h1 {
+  font-size: 1.75rem;
+  font-weight: 600;
+  color: var(--texto-oscuro);
+  letter-spacing: -0.02em;
+}
+
+#perfil-page .container header p {
+  margin-top: 6px;
+  color: var(--texto-muted);
+  font-size: 0.9rem;
+  font-weight: 300;
+}
+
+#perfil-page .accent-bar {
+  width: 40px;
+  height: 3px;
+  background: var(--morado);
+  border-radius: 2px;
+  margin-bottom: 12px;
+}
+
+#perfil-page .tab-panel {
+  display: none;
+  animation: fadeInPerfil 0.25s ease;
+}
+
+#perfil-page .tab-panel.active {
+  display: block;
+}
+
+@keyframes fadeInPerfil {
+  from {
+    opacity: 0;
+    transform: translateY(6px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+#perfil-page .card {
+  background: var(--blanco);
+  border-radius: var(--radius);
+  padding: 32px;
+  box-shadow: var(--shadow);
+  border: 1px solid var(--borde-suave);
+}
+
+#perfil-page .card h2 {
+  font-size: 1rem;
+  font-weight: 600;
+  color: var(--texto-oscuro);
+  margin-bottom: 24px;
+  padding-bottom: 16px;
+  border-bottom: 1px solid var(--lavanda);
+}
+
+#perfil-page .form-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 16px;
+}
+
+#perfil-page .form-group {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+}
+
+#perfil-page .form-group.full {
+  grid-column: 1 / -1;
+}
+
+#perfil-page label {
+  font-size: 0.78rem;
+  font-weight: 500;
+  color: var(--texto-muted);
+  letter-spacing: 0.03em;
+  text-transform: uppercase;
+}
+
+#perfil-page input,
+#perfil-page select {
+  font-family: "DM Sans", sans-serif;
+  font-size: 0.9rem;
+  color: var(--texto-oscuro);
+  background: var(--fondo);
+  border: 1.5px solid var(--borde-suave);
+  border-radius: var(--radius-sm);
+  padding: 10px 14px;
+  outline: none;
+  transition: border-color 0.2s, box-shadow 0.2s;
+  width: 100%;
+  appearance: none;
+  -webkit-appearance: none;
+}
+
+#perfil-page input:focus {
+  border-color: var(--morado);
+  box-shadow: 0 0 0 3px rgba(109, 40, 217, 0.1);
+  background: var(--blanco);
+}
+
+#perfil-page input[readonly] {
+  background-color: var(--lavanda);
+  cursor: not-allowed;
+  color: var(--texto-muted);
+}
+
+#perfil-page input[type="password"] {
+  font-family: "DM Mono", monospace;
+  letter-spacing: 0.1em;
+}
+
+#perfil-page .btn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  padding: 12px 24px;
+  border: none;
+  border-radius: var(--radius-sm);
+  font-family: inherit;
+  font-size: 0.88rem;
+  font-weight: 500;
+  cursor: pointer;
+  transition: all 0.2s ease;
+}
+
+#perfil-page .btn-primary {
+  background: var(--morado);
+  color: var(--blanco);
+}
+
+#perfil-page .btn-primary:hover {
+  background: var(--morado-hover);
+  transform: translateY(-1px);
+  box-shadow: 0 4px 12px rgba(109, 40, 217, 0.3);
+}
+
+#perfil-page .info-note {
+  font-size: 0.8rem;
+  color: var(--texto-muted);
+  background: var(--lavanda);
+  border-radius: var(--radius-sm);
+  padding: 10px 14px;
+  margin-bottom: 20px;
+  border-left: 3px solid var(--morado);
+}
+
+#login-page .tipo-login-tabs {
+  display: flex;
+  gap: 8px;
+  margin-bottom: 20px;
+}
+
+#login-page .tipo-login-tab {
+  flex: 1;
+  padding: 10px;
+  border: 1px solid var(--borde);
+  background: transparent;
+  border-radius: 6px;
+  cursor: pointer;
+  font-size: 0.85rem;
+  color: var(--texto-muted);
+  transition: all 0.2s;
+}
+
+#login-page .tipo-login-tab.active {
+  background: var(--morado);
+  color: white;
+  border-color: var(--morado);
+}
+
+#login-page .tipo-login-tab:hover:not(.active) {
+  background: var(--lavanda);
+}

@@ -5,16 +5,10 @@
         </a>
 
         <nav>
-            <ul class="menu">
-                <li class="dropdown">
-                    <a href="#">Menu</a>
-                    <ul class="submenu">
-                        <li><a href="incidencias.html">Incidencias</a></li>
-                        <li><a href="informes.html">Informes</a></li>
-                        <li><a href="registro-usuarios.html">Registro de Usuarios</a></li>
-                        <li><a href="registroVehiculos.html">Registro de Vehículos</a></li>
-                        <li><a href="registro-accesos.html">Registro de Accesos</a></li>
-                        <li><a href="index.html">Disponibilidad</a></li>
+            <ul class="menu" id="main-menu">
+                <li class="dropdown" id="menu-principal">
+                    <a href="#">Menú</a>
+                    <ul class="submenu" id="menu-items">
                     </ul>
                 </li>
                 <li id="auth-section">
@@ -43,6 +37,7 @@
         .user-role {
             font-size: 11px;
             color: var(--texto-muted);
+            text-transform: capitalize;
         }
         .btn-logout {
             background: var(--error);
@@ -60,21 +55,59 @@
     </style>
 
     <script>
+        const menuItemsByRole = {
+            usuario: [
+                { text: 'Disponibilidad', href: 'index.html', icon: '🅿️' },
+                { text: 'Mi Perfil', href: 'perfil.html', icon: '👤' }
+            ],
+            operador: [
+                { text: 'Disponibilidad', href: 'index.html', icon: '🅿️' },
+                { text: 'Registrar Acceso', href: 'registro-accesos.html', icon: '🚗' },
+                { text: 'Registrar Incidencia', href: 'incidencias.html', icon: '⚠️' },
+                { text: 'Mi Perfil', href: 'perfil.html', icon: '👤' }
+            ],
+            administrador: [
+                { text: 'Disponibilidad', href: 'index.html', icon: '🅿️' },
+                { text: 'Usuarios', href: 'registro-usuarios.html', icon: '👥' },
+                { text: 'Vehículos', href: 'registroVehiculos.html', icon: '🚙' },
+                { text: 'Accesos', href: 'registro-accesos.html', icon: '🚗' },
+                { text: 'Incidencias', href: 'incidencias.html', icon: '⚠️' },
+                { text: 'Informes', href: 'informes.html', icon: '📊' },
+                { text: 'Mi Perfil', href: 'perfil.html', icon: '👤' }
+            ]
+        };
+
         function updateHeaderAuth() {
             const authSection = document.getElementById('auth-section');
+            const menuItems = document.getElementById('menu-items');
             const user = api.getCurrentUser();
 
             if (user) {
+                const rol = user.rol || 'usuario';
+                const items = menuItemsByRole[rol] || menuItemsByRole.usuario;
+                
+                let itemsHtml = items.map(item => 
+                    `<li><a href="${item.href}">${item.icon} ${item.text}</a></li>`
+                ).join('');
+                
+                menuItems.innerHTML = itemsHtml;
+                
+                const nombreMostrar = user.nombre || `${user.primerNombre} ${user.primerApellido}`;
+                const rolMostrar = rol.charAt(0).toUpperCase() + rol.slice(1);
+                
                 authSection.innerHTML = `
                     <div class="user-menu">
                         <div class="user-info">
-                            <span class="user-name">${user.nombre}</span>
-                            <span class="user-role">${user.rol}</span>
+                            <span class="user-name">${nombreMostrar}</span>
+                            <span class="user-role">${rolMostrar}</span>
                         </div>
                         <button class="btn-logout" onclick="logout()">Cerrar sesión</button>
                     </div>
                 `;
             } else {
+                menuItems.innerHTML = `
+                    <li><a href="login.html">🔑 Iniciar sesión</a></li>
+                `;
                 authSection.innerHTML = '<a href="login.html">Iniciar sesión</a>';
             }
         }

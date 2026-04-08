@@ -7,34 +7,71 @@
   <title>BioParking - Login</title>
   <link rel="stylesheet" href="styles/styles.css" />
   <link rel="icon" type="image/png" href="assets/images/Logo_P.png" />
+  <script src="js/utils.js"></script>
   <script src="js/api.js"></script>
 </head>
 
 <body id="login-page">
+  <script src="js/load-header.js"></script>
   <div class="login-container">
     <img src="assets/images/bioparking_transparente.png" alt="BioParking Logo" class="login-logo" />
 
     <form id="loginForm">
+      <div class="tipo-login-tabs">
+        <button type="button" class="tipo-login-tab active" data-tipo="usuario" onclick="setTipoLogin('usuario')">
+          Usuario
+        </button>
+        <button type="button" class="tipo-login-tab" data-tipo="operador" onclick="setTipoLogin('operador')">
+          Operador
+        </button>
+        <button type="button" class="tipo-login-tab" data-tipo="admin" onclick="setTipoLogin('admin')">
+          Admin
+        </button>
+      </div>
+
       <div class="input-group">
         <span class="icon">🪪</span>
         <input type="text" id="documento" placeholder="Documento" required />
       </div>
-      <div class="input-group">
+      
+      <div class="input-group" id="clave-group" style="display: none;">
         <span class="icon">🔒</span>
-        <input type="password" id="clave" placeholder="Contraseña" required />
+        <input type="password" id="clave" placeholder="Contraseña" />
       </div>
-      <a href="olvidaste_contraseña.html" class="forgot">¿Olvidaste tu contraseña?</a>
-      <a href="registro-usuarios.html" class="Crear-cuenta">Crear cuenta</a>
-      <nav>
-        <ul>
-          <a href="usuario.html" class="Crear-cuenta">Ingresar como usuario</a>
-        </ul>
-      </nav>
-      <button type="submit" class="btn-login">Login</button>
+      
+      <a href="olvidaste_contraseña.html" class="forgot" id="link-olvidaste" style="display: none;">¿Olvidaste tu contraseña?</a>
+      <a href="registro-usuarios.html" class="forgot" style="display: block; text-align: center; margin-top: 12px;">Crear cuenta</a>
+      
+      <button type="submit" class="btn-login">Iniciar sesión</button>
     </form>
   </div>
 
   <script>
+    let tipoLoginActual = 'usuario';
+
+    function setTipoLogin(tipo) {
+      tipoLoginActual = tipo;
+      
+      document.querySelectorAll('.tipo-login-tab').forEach(tab => {
+        tab.classList.toggle('active', tab.dataset.tipo === tipo);
+      });
+      
+      const claveGroup = document.getElementById('clave-group');
+      const linkOlvidaste = document.getElementById('link-olvidaste');
+      
+      if (tipo === 'usuario') {
+        claveGroup.style.display = 'none';
+        linkOlvidaste.style.display = 'none';
+        document.getElementById('documento').placeholder = 'Ingrese su documento';
+      } else {
+        claveGroup.style.display = 'flex';
+        linkOlvidaste.style.display = 'block';
+        document.getElementById('documento').placeholder = 'Documento';
+      }
+    }
+
+    setTipoLogin('usuario');
+
     document.getElementById('loginForm').addEventListener('submit', async (e) => {
       e.preventDefault();
       
@@ -42,21 +79,40 @@
       const clave = document.getElementById('clave').value;
 
       try {
-        const user = await api.login(documento, clave);
+        let user;
+        
+        if (tipoLoginActual === 'usuario') {
+          user = await api.login(documento, null);
+        } else {
+          user = await api.login(documento, clave);
+        }
+        
         showNotification(`Bienvenido ${user.nombre}`, 'success');
         
-        if (user.rol === 'administrador' || user.rol === 'operador') {
-          window.location.href = 'index.html';
-        } else {
-          window.location.href = 'index.html';
-        }
+        setTimeout(() => {
+          if (user.rol === 'administrador') {
+            window.location.href = 'registro-usuarios.html';
+          } else if (user.rol === 'operador') {
+            window.location.href = 'registro-accesos.html';
+          } else {
+            window.location.href = 'index.html';
+          }
+        }, 500);
+        
       } catch (error) {
         showNotification(error.message, 'error');
       }
     });
 
     if (api.isAuthenticated()) {
-      window.location.href = 'index.html';
+      const user = api.getCurrentUser();
+      if (user.rol === 'administrador') {
+        window.location.href = 'registro-usuarios.html';
+      } else if (user.rol === 'operador') {
+        window.location.href = 'registro-accesos.html';
+      } else {
+        window.location.href = 'index.html';
+      }
     }
   </script>
 </body>

@@ -7,11 +7,19 @@ const api = {
         const headers = {
             'Content-Type': 'application/json'
         };
-        const user = this.getCurrentUser();
-        if (user && user.rol) {
-            headers['rol'] = user.rol;
+        const token = this.getToken();
+        if (token) {
+            headers['Authorization'] = `Bearer ${token}`;
         }
         return headers;
+    },
+
+    getToken() {
+        return localStorage.getItem('parkingToken');
+    },
+
+    setToken(token) {
+        localStorage.setItem('parkingToken', token);
     },
 
     getCurrentUser() {
@@ -25,6 +33,7 @@ const api = {
 
     logout() {
         localStorage.removeItem('parkingUser');
+        localStorage.removeItem('parkingToken');
     },
 
     isAuthenticated() {
@@ -89,43 +98,51 @@ const api = {
         return this.request(endpoint, { method: 'DELETE' });
     },
 
-    async login(numeroDocumento, clave) {
-        const usuarios = await this.get('/usuarios');
-        const usuario = usuarios.find(u =>
-            u.numeroDocumento === numeroDocumento && u.clave === clave
-        );
+    async login(numeroDocumento, clave, tipoLogin = null) {
+        const response = await this.post('/auth/login', { numeroDocumento, clave, tipoLogin });
 
-        if (!usuario) {
-            throw new Error('Documento o contraseña incorrectos');
+        if (!response || !response.usuario) {
+            throw new Error('Respuesta inválida del servidor');
         }
 
-        let rol = 'usuario';
-        try {
-            const admins = await this.get('/administradores');
-            if (admins.find(a => a.usuarioId === usuario.id)) {
-                rol = 'administrador';
-            }
-        } catch (e) {}
-
-        if (rol === 'usuario') {
-            try {
-                const ops = await this.get('/operadores');
-                if (ops.find(o => o.usuarioId === usuario.id)) {
-                    rol = 'operador';
-                }
-            } catch (e) {}
+        // Guardar token JWT
+        if (response.token) {
+            this.setToken(response.token);
         }
 
         const userData = {
-            id: usuario.id,
-            numeroDocumento: usuario.numeroDocumento,
-            nombre: `${usuario.primerNombre} ${usuario.primerApellido}`,
-            rol: rol,
-            perfilId: usuario.perfilId
+            id: response.usuario.id,
+            tipoDocumento: response.usuario.tipoDocumento,
+            numeroDocumento: response.usuario.numeroDocumento,
+            primerNombre: response.usuario.primerNombre,
+            segundoNombre: response.usuario.segundoNombre,
+            primerApellido: response.usuario.primerApellido,
+            segundoApellido: response.usuario.segundoApellido,
+            nombre: `${response.usuario.primerNombre} ${response.usuario.primerApellido}`,
+            direccionCorreo: response.usuario.direccionCorreo,
+            numeroCelular: response.usuario.numeroCelular,
+            fotoPerfil: response.usuario.fotoPerfil,
+            rol: response.usuario.perfil || response.usuario.rol || 'usuario',
+            perfil: response.usuario.perfil,
+            perfilId: response.usuario.perfilId
         };
 
         this.setCurrentUser(userData);
         return userData;
+    },
+
+    perfil: {
+        async get(id) {
+            return api.get(`/perfil/${id}`);
+        },
+
+        async update(id, data) {
+            return api.put(`/perfil/${id}`, data);
+        },
+
+        async cambiarClave(id, claveActual, claveNueva) {
+            return api.put(`/perfil/${id}/clave`, { claveActual, claveNueva });
+        }
     },
 
     usuarios: {
@@ -415,6 +432,54 @@ const api = {
 
         async delete(id) {
             return api.delete(`/operadores/${id}`);
+        }
+    },
+
+    reportes: {
+        async getUsuarios() {
+            return api.get('/reportes/usuarios');
+        },
+
+        async getVehiculos() {
+            return api.get('/reportes/vehiculos');
+        },
+
+        async getEntradas(fecha) {
+            const url = fecha ? `/reportes/entradas?fecha=${fecha}` : '/reportes/entradas';
+            return api.get(url);
+        },
+
+        async getSalidas(fecha) {
+            const url = fecha ? `/reportes/salidas?fecha=${fecha}` : '/reportes/salidas';
+            return api.get(url);
+        },
+
+        async getIncidencias() {
+            return api.get('/reportes/incidencias');
+        },
+
+        async getPicoPlacaDia(fecha) {
+            return api.get(`/reportes/pico-placa/dia/${fecha}`);
+        },
+
+        async getCeldasOcupacion(fecha) {
+            const url = fecha ? `/reportes/celdas/ocupacion?fecha=${fecha}` : '/reportes/celdas/ocupacion';
+            return api.get(url);
+        },
+
+        async getCeldasMasUsadas(inicio, fin) {
+            const url = inicio && fin ? `/reportes/celdasmas-usadas?inicio=${inicio}&fin=${fin}` : '/reportes/celdasmas-usadas';
+            return api.get(url);
+        },
+
+        async getVehiculosMasUsados(inicio, fin) {
+            const url = inicio && fin ? `/reportes/vehiculos-mas-usados?inicio=${inicio}&fin=${fin}` : '/reportes/vehiculos-mas-usados';
+            return api.get(url);
+        },
+
+        async getHorariosPico(inicio, fin) {
+            const url = inicio && fin ? `/reportes/horarios-pico?inicio=${inicio}&fin=${fin}` : '/reportes/horarios-pico';
+            return api.get(url);
         }
     }
 };
