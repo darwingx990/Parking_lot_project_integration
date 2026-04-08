@@ -6,7 +6,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@300;400;500;600;700&display=swap"
         rel="stylesheet" />
-    <link rel="stylesheet" href="css/styles.css" />
+    <link rel="stylesheet" href="styles/styles.css" />
     <link rel="icon" type="image/png" href="assets/images/Logo_P.png" />
     <script src="js/api.js"></script>
     <title>Registro de Accesos | BioParking</title>
@@ -17,28 +17,28 @@
         <header>
             <div class="accent-bar"></div>
             <h1>Registro de Accesos</h1>
-            <p>Control de entradas y salidas de vehÃ­culos del parqueadero</p>
+            <p>Control de entradas y salidas de vehículos del parqueadero</p>
         </header>
 
         <nav class="tabs-nav" role="tablist">
             <button class="tab-btn active" role="tab" onclick="switchTab('entrada', this)">
-                <span class="tab-icon">ðŸš—</span> Registrar entrada
+                <span class="tab-icon">🚗</span> Registrar entrada
             </button>
             <button class="tab-btn" role="tab" onclick="switchTab('salida', this)">
-                <span class="tab-icon">ðŸš™</span> Registrar salida
+                <span class="tab-icon">🚙</span> Registrar salida
             </button>
             <button class="tab-btn" role="tab" onclick="switchTab('historial', this)">
-                <span class="tab-icon">ðŸ“‹</span> Historial
+                <span class="tab-icon">📋</span> Historial
             </button>
         </nav>
 
         <div class="tab-panel active" id="tab-entrada">
             <div class="card">
                 <div class="card-header">
-                    <div class="card-icon">ðŸŸ¢</div>
+                    <div class="card-icon">🟢</div>
                     <div>
-                        <h2>Registrar entrada de vehÃ­culo</h2>
-                        <p>Operador Â· Administrador</p>
+                        <h2>Registrar entrada de vehículo</h2>
+                        <p>Operador · Administrador</p>
                     </div>
                 </div>
 
@@ -48,14 +48,14 @@
                             <label for="entrada-puerta">Puerta de acceso</label>
                             <select id="entrada-puerta" required>
                                 <option value="">Seleccione puerta</option>
-                                <option value="Puerta 1">Puerta 1 â€” Entrada principal</option>
-                                <option value="Puerta 2">Puerta 2 â€” Entrada lateral</option>
-                                <option value="Puerta 3">Puerta 3 â€” Entrada norte</option>
+                                <option value="Puerta 1">Puerta 1 — Entrada principal</option>
+                                <option value="Puerta 2">Puerta 2 — Entrada lateral</option>
+                                <option value="Puerta 3">Puerta 3 — Entrada norte</option>
                             </select>
                         </div>
 
                         <div class="form-group">
-                            <label for="entrada-placa">Placa del vehÃ­culo</label>
+                            <label for="entrada-placa">Placa del vehículo</label>
                             <input type="text" id="entrada-placa" placeholder="Ej. ABC123" required />
                         </div>
 
@@ -81,10 +81,10 @@
         <div class="tab-panel" id="tab-salida">
             <div class="card">
                 <div class="card-header">
-                    <div class="card-icon">ðŸ”´</div>
+                    <div class="card-icon">🔴</div>
                     <div>
-                        <h2>Registrar salida de vehÃ­culo</h2>
-                        <p>Operador Â· Administrador</p>
+                        <h2>Registrar salida de vehículo</h2>
+                        <p>Operador · Administrador</p>
                     </div>
                 </div>
 
@@ -94,14 +94,14 @@
                             <label for="salida-puerta">Puerta de salida</label>
                             <select id="salida-puerta" required>
                                 <option value="">Seleccione puerta</option>
-                                <option value="Puerta 1">Puerta 1 â€” Salida principal</option>
-                                <option value="Puerta 2">Puerta 2 â€” Salida lateral</option>
-                                <option value="Puerta 3">Puerta 3 â€” Salida norte</option>
+                                <option value="Puerta 1">Puerta 1 — Salida principal</option>
+                                <option value="Puerta 2">Puerta 2 — Salida lateral</option>
+                                <option value="Puerta 3">Puerta 3 — Salida norte</option>
                             </select>
                         </div>
 
                         <div class="form-group">
-                            <label for="salida-placa">Placa del vehÃ­culo</label>
+                            <label for="salida-placa">Placa del vehículo</label>
                             <input type="text" id="salida-placa" placeholder="Ej. ABC123" required />
                         </div>
 
@@ -127,7 +127,7 @@
         <div class="tab-panel" id="tab-historial">
             <div class="card">
                 <div class="card-header">
-                    <div class="card-icon">ðŸ“‹</div>
+                    <div class="card-icon">📋</div>
                     <div>
                         <h2>Historial de accesos</h2>
                         <p>Registros de entradas y salidas</p>
@@ -151,7 +151,7 @@
 
                 <div style="margin-bottom: 16px;">
                     <button onclick="loadHistorial()" class="btn btn-primary" style="width: auto; padding: 10px 20px;">
-                        ðŸ” Filtrar
+                        🔍 Filtrar
                     </button>
                 </div>
 
@@ -169,7 +169,7 @@
                                     <th>Placa</th>
                                     <th>Puerta</th>
                                     <th>Fecha/Hora</th>
-                                    <th>DuraciÃ³n</th>
+                                    <th>Duración</th>
                                     <th>Estado</th>
                                 </tr>
                             </thead>
@@ -204,14 +204,14 @@
             try {
                 return await api.vehiculos.getByPlaca(placa.toUpperCase());
             } catch (error) {
-                // Si el endpoint 404, el vehÃ­culo no existe
+                // Si el endpoint 404, el vehículo no existe
                 return null;
             }
         }
 
         document.getElementById('form-entrada').addEventListener('submit', async (e) => {
             e.preventDefault();
-            
+
             const puerta = document.getElementById('entrada-puerta').value;
             const placa = document.getElementById('entrada-placa').value.toUpperCase();
             const fecha = document.getElementById('entrada-fecha').value;
@@ -219,18 +219,18 @@
 
             try {
                 let vehiculo = await buscarVehiculoPorPlaca(placa);
-                
+
                 if (!vehiculo) {
-                    const crear = confirm('VehÃ­culo no encontrado. Â¿Desea registrarlo?');
+                    const crear = confirm('Vehículo no encontrado. ¿Desea registrarlo?');
                     if (crear) {
-                        window.location.href = 'registro-vehiculos.html';
+                        window.location.href = 'registroVehiculos.html';
                     }
                     return;
                 }
 
                 const picoPlaca = await api.picoPlaca.verificarRestriccion(vehiculo.tipo, placa);
                 if (picoPlaca) {
-                    showNotification(`âš ï¸ pico y placa activo para ${vehiculo.tipo} el dÃ­a de hoy`, 'info');
+                    showNotification(`⚠️ pico y placa activo para ${vehiculo.tipo} el día de hoy`, 'info');
                 }
 
                 const fechaHora = `${fecha}T${hora}:00`;
@@ -254,7 +254,7 @@
 
         document.getElementById('form-salida').addEventListener('submit', async (e) => {
             e.preventDefault();
-            
+
             const puerta = document.getElementById('salida-puerta').value;
             const placa = document.getElementById('salida-placa').value.toUpperCase();
             const fecha = document.getElementById('salida-fecha').value;
@@ -262,9 +262,9 @@
 
             try {
                 const vehiculo = await buscarVehiculoPorPlaca(placa);
-                
+
                 if (!vehiculo) {
-                    showNotification('VehÃ­culo no encontrado', 'error');
+                    showNotification('Vehículo no encontrado', 'error');
                     return;
                 }
 
@@ -283,7 +283,7 @@
                     });
                     showNotification('Salida registrada exitosamente', 'success');
                 } else {
-                    showNotification('No se encontrÃ³ entrada activa para este vehÃ­culo', 'error');
+                    showNotification('No se encontró entrada activa para este vehículo', 'error');
                 }
 
                 document.getElementById('form-salida').reset();
@@ -297,7 +297,7 @@
         async function loadHistorial() {
             const tbody = document.getElementById('historial-body');
             const recordCount = document.getElementById('record-count');
-            
+
             tbody.innerHTML = '<tr><td colspan="6" style="text-align: center; padding: 20px;">Cargando...</td></tr>';
 
             try {
@@ -349,12 +349,12 @@
 
                     return `
                         <tr>
-                            <td><span class="badge badge-${isEntrada ? 'entrada' : 'salida'}">${isEntrada ? 'â–²' : 'â–¼'} ${acceso.movimiento}</span></td>
+                            <td><span class="badge badge-${isEntrada ? 'entrada' : 'salida'}">${isEntrada ? '▲' : '▼'} ${acceso.movimiento}</span></td>
                             <td><strong>${placa}</strong></td>
                             <td>${acceso.puerta}</td>
                             <td>${fechaFormateada} ${horaFormateada}</td>
-                            <td>${acceso.tiempoEstadia || 'â€”'}</td>
-                            <td><span class="badge badge-${isEntrada ? 'activo' : 'salida'}">${isEntrada ? 'â— En parqueadero' : 'âœ“ Finalizado'}</span></td>
+                            <td>${acceso.tiempoEstadia || '—'}</td>
+                            <td><span class="badge badge-${isEntrada ? 'activo' : 'salida'}">${isEntrada ? '● En parqueadero' : '✓ Finalizado'}</span></td>
                         </tr>
                     `;
                 }).join('');
@@ -370,4 +370,3 @@
 </body>
 
 </html>
-

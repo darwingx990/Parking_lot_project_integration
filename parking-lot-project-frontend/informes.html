@@ -6,7 +6,7 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>Reportes | BioParking</title>
   <link rel="icon" type="image/png" href="assets/images/Logo_P.png" />
-  <link rel="stylesheet" href="css/styles.css" />
+  <link rel="stylesheet" href="styles/styles.css" />
   <script src="js/api.js"></script>
 </head>
 
@@ -14,7 +14,7 @@
   <div class="layout">
     <main class="content">
       <header class="content-header">
-        <h1>Reportes y EstadÃ­sticas</h1>
+        <h1>Reportes y Estadísticas</h1>
         <p>Panel de informes del parqueadero</p>
       </header>
 
@@ -32,7 +32,7 @@
 
       <nav class="tabs-nav">
         <button class="tab-btn active" data-tab="usuarios" onclick="switchTab('usuarios', this)">Usuarios</button>
-        <button class="tab-btn" data-tab="vehiculos" onclick="switchTab('vehiculos', this)">VehÃ­culos</button>
+        <button class="tab-btn" data-tab="vehiculos" onclick="switchTab('vehiculos', this)">Vehículos</button>
         <button class="tab-btn" data-tab="accesos" onclick="switchTab('accesos', this)">Accesos</button>
         <button class="tab-btn" data-tab="incidencias" onclick="switchTab('incidencias', this)">Incidencias</button>
         <button class="tab-btn" data-tab="pico-placa" onclick="switchTab('pico-placa', this)">Pico y Placa</button>
@@ -127,9 +127,9 @@
           <table>
             <thead>
               <tr>
-                <th>Tipo VehÃ­culo</th>
-                <th>DÃ­a</th>
-                <th>DÃ­gito Restringido</th>
+                <th>Tipo Vehículo</th>
+                <th>Día</th>
+                <th>Dígito Restringido</th>
               </tr>
             </thead>
             <tbody id="tabla-pico-placa">
@@ -150,7 +150,7 @@
                 <th>ID Celda</th>
                 <th>Tipo</th>
                 <th>Estado</th>
-                <th>OcupaciÃ³n</th>
+                <th>Ocupación</th>
               </tr>
             </thead>
             <tbody id="tabla-celdas">
@@ -241,7 +241,7 @@
           <td>${u.primerNombre} ${u.primerApellido}</td>
           <td>${u.direccionCorreo || '-'}</td>
           <td>${u.numeroCelular || '-'}</td>
-          <td><span class="status-hint ${u.estado === 'activo' ? 'active' : 'inactive'}">â— ${u.estado}</span></td>
+          <td><span class="status-hint ${u.estado === 'activo' ? 'active' : 'inactive'}">● ${u.estado}</span></td>
         </tr>
       `).join('');
     }
@@ -249,7 +249,7 @@
     function renderizarVehiculos() {
       const tbody = document.getElementById('tabla-vehiculos');
       if (datosCache.vehiculos.length === 0) {
-        tbody.innerHTML = '<tr><td colspan="6" style="text-align: center;">No hay vehÃ­culos</td></tr>';
+        tbody.innerHTML = '<tr><td colspan="6" style="text-align: center;">No hay vehículos</td></tr>';
         return;
       }
       tbody.innerHTML = datosCache.vehiculos.map(v => {
@@ -281,10 +281,10 @@
         return `
           <tr>
             <td>${fecha.toLocaleDateString('es-CO')} ${fecha.toLocaleTimeString('es-CO', { hour: '2-digit', minute: '2-digit' })}</td>
-            <td><span class="badge badge-${esEntrada ? 'entrada' : 'salida'}">${esEntrada ? 'â–²' : 'â–¼'} ${a.movimiento}</span></td>
+            <td><span class="badge badge-${esEntrada ? 'entrada' : 'salida'}">${esEntrada ? '▲' : '▼'} ${a.movimiento}</span></td>
             <td><strong>${vehiculo ? vehiculo.placa : 'N/A'}</strong></td>
             <td>${a.puerta}</td>
-            <td><span class="badge badge-${esEntrada ? 'activo' : 'salida'}">${esEntrada ? 'â— En parqueadero' : 'âœ“ Finalizado'}</span></td>
+            <td><span class="badge badge-${esEntrada ? 'activo' : 'salida'}">${esEntrada ? '● En parqueadero' : '✓ Finalizado'}</span></td>
           </tr>
         `;
       }).join('');

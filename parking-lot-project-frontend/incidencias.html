@@ -6,7 +6,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Reporte de Incidencias | BioParking</title>
     <link rel="icon" type="image/jpg" href="assets/images/Logo_P.png">
-    <link rel="stylesheet" href="css/styles.css">
+    <link rel="stylesheet" href="styles/styles.css">
     <script src="js/api.js"></script>
 </head>
 
@@ -21,9 +21,9 @@
             <form id="form-incidencia" class="incident-form">
 
                 <div class="form-group">
-                    <label for="vehiculo">Placa del vehÃ­culo afectado</label>
+                    <label for="vehiculo">Placa del vehículo afectado</label>
                     <input type="text" id="vehiculo-placa" placeholder="Ej: ABC123" required>
-                    <small>Ingrese la placa del vehÃ­culo involucrado</small>
+                    <small>Ingrese la placa del vehículo involucrado</small>
                 </div>
 
                 <div class="form-row">
@@ -41,13 +41,13 @@
                 <div class="form-group">
                     <label for="tipo">Tipo de incidencia</label>
                     <select id="tipo-incidencia" required onchange="mostrarOtroTipo(this)">
-                        <option value="">Seleccione una opciÃ³n</option>
+                        <option value="">Seleccione una opción</option>
                         <option value="Rayones">Rayones</option>
                         <option value="Choques">Choques</option>
                         <option value="Atropellamientos">Atropellamientos</option>
                         <option value="Golpes contra muros">Golpes contra muros</option>
-                        <option value="Robo vehiculo">Robo de vehÃ­culo</option>
-                        <option value="DaÃ±o en celda">DaÃ±o en celda</option>
+                        <option value="Robo vehiculo">Robo de vehículo</option>
+                        <option value="Daño en celda">Daño en celda</option>
                         <option value="Otro">Otro</option>
                     </select>
                 </div>
@@ -58,7 +58,7 @@
                 </div>
 
                 <div class="form-group">
-                    <label for="descripcion">DescripciÃ³n adicional (opcional)</label>
+                    <label for="descripcion">Descripción adicional (opcional)</label>
                     <textarea id="descripcion" placeholder="Detalles relevantes de la incidencia"></textarea>
                 </div>
 
@@ -78,11 +78,13 @@
                             <th>Fecha</th>
                             <th>Placa</th>
                             <th>Tipo</th>
-                            <th>DescripciÃ³n</th>
+                            <th>Descripción</th>
                         </tr>
                     </thead>
                     <tbody id="incidencias-body">
-                        <tr><td colspan="4" style="text-align: center;">Cargando...</td></tr>
+                        <tr>
+                            <td colspan="4" style="text-align: center;">Cargando...</td>
+                        </tr>
                     </tbody>
                 </table>
             </div>
@@ -90,7 +92,7 @@
     </main>
 
     <script src="js/load-header.js"></script>
-    
+
     <script>
         document.getElementById('fecha').valueAsDate = new Date();
 
@@ -117,13 +119,13 @@
                     const vehiculo = vehiculos.find(v => v.id === r.vehiculoId);
                     const incidencia = incidencias.find(i => i.id === r.incidenciaId);
                     const fecha = new Date(r.fechaHora);
-                    
+
                     return `
                         <tr>
                             <td>${fecha.toLocaleDateString('es-CO')} ${fecha.toLocaleTimeString('es-CO', { hour: '2-digit', minute: '2-digit' })}</td>
                             <td><strong>${vehiculo ? vehiculo.placa : 'N/A'}</strong></td>
                             <td>${incidencia ? incidencia.nombre : 'N/A'}</td>
-                            <td>â€”</td>
+                            <td>—</td>
                         </tr>
                     `;
                 }).join('');
@@ -136,7 +138,7 @@
 
         document.getElementById('form-incidencia').addEventListener('submit', async (e) => {
             e.preventDefault();
-            
+
             const placa = document.getElementById('vehiculo-placa').value.toUpperCase();
             const fecha = document.getElementById('fecha').value;
             const hora = document.getElementById('hora').value;
@@ -148,7 +150,7 @@
             }
 
             try {
-                // Buscar vehÃ­culo directamente por placa (sin descargar todos)
+                // Buscar vehículo directamente por placa (sin descargar todos)
                 let vehiculo;
                 try {
                     vehiculo = await api.vehiculos.getByPlaca(placa);
@@ -157,7 +159,7 @@
                 }
 
                 if (!vehiculo) {
-                    showNotification('VehÃ­culo no encontrado. Verifique la placa.', 'error');
+                    showNotification('Vehículo no encontrado. Verifique la placa.', 'error');
                     return;
                 }
 
@@ -203,4 +205,3 @@
 </body>
 
 </html>
-
