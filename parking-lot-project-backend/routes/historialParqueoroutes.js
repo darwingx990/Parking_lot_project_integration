@@ -4,7 +4,9 @@ const historialParqueoService = require('../services/historialParqueoService');
 
 router.get('/', async (req, res) => {
     try {
-        const historiales = await historialParqueoService.obtenerHistoriales();
+        const limite = parseInt(req.query.limite) || 100;
+        const pagina = parseInt(req.query.pagina) || 0;
+        const historiales = await historialParqueoService.obtenerHistoriales(limite, pagina * limite);
         res.status(200).json(historiales);
     } catch (error) {
         res.status(500).json({ error: error.message });

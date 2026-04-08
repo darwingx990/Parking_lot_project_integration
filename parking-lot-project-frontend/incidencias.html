@@ -1,12 +1,13 @@
-<!DOCTYPE html>
+﻿<!DOCTYPE html>
 <html lang="es">
 
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Reporte de Incidencias | Parqueadero</title>
+    <title>Reporte de Incidencias | BioParking</title>
     <link rel="icon" type="image/jpg" href="assets/images/Logo_P.png">
     <link rel="stylesheet" href="styles/styles.css">
+    <script src="js/api.js"></script>
 </head>
 
 <body id="incidencias-page">
@@ -17,17 +18,12 @@
         </header>
 
         <section class="card">
-            <form class="incident-form">
+            <form id="form-incidencia" class="incident-form">
 
                 <div class="form-group">
-                    <label for="codigo">Código de incidencia</label>
-                    <input type="text" id="codigo" value="INC-000001" readonly>
-                    <small>Este código es generado automáticamente por el sistema</small>
-                </div>
-
-                <div class="form-group">
-                    <label for="vehiculo">Vehículo afectado</label>
-                    <input type="text" id="vehiculo" placeholder="Ej: Placa ABC-123" required>
+                    <label for="vehiculo">Placa del vehículo afectado</label>
+                    <input type="text" id="vehiculo-placa" placeholder="Ej: ABC123" required>
+                    <small>Ingrese la placa del vehículo involucrado</small>
                 </div>
 
                 <div class="form-row">
@@ -44,13 +40,21 @@
 
                 <div class="form-group">
                     <label for="tipo">Tipo de incidencia</label>
-                    <select id="tipo" required>
+                    <select id="tipo-incidencia" required onchange="mostrarOtroTipo(this)">
                         <option value="">Seleccione una opción</option>
-                        <option value="rayones">Rayones</option>
-                        <option value="choques">Choques</option>
-                        <option value="atropellamientos">Atropellamientos</option>
-                        <option value="golpes">Golpes contra muros</option>
+                        <option value="Rayones">Rayones</option>
+                        <option value="Choques">Choques</option>
+                        <option value="Atropellamientos">Atropellamientos</option>
+                        <option value="Golpes contra muros">Golpes contra muros</option>
+                        <option value="Robo vehiculo">Robo de vehículo</option>
+                        <option value="Daño en celda">Daño en celda</option>
+                        <option value="Otro">Otro</option>
                     </select>
+                </div>
+
+                <div class="form-group" id="otro-tipo-container" style="display: none;">
+                    <label for="otro-tipo">Especifique el tipo</label>
+                    <input type="text" id="otro-tipo" placeholder="Describa el tipo de incidencia">
                 </div>
 
                 <div class="form-group">
@@ -64,9 +68,140 @@
 
             </form>
         </section>
+
+        <section class="card" style="margin-top: 24px;">
+            <h2 style="color: var(--morado); margin-bottom: 16px;">Incidencias recientes</h2>
+            <div class="table-container">
+                <table>
+                    <thead>
+                        <tr>
+                            <th>Fecha</th>
+                            <th>Placa</th>
+                            <th>Tipo</th>
+                            <th>Descripción</th>
+                        </tr>
+                    </thead>
+                    <tbody id="incidencias-body">
+                        <tr>
+                            <td colspan="4" style="text-align: center;">Cargando...</td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+        </section>
     </main>
-    <!-- Header compartido -->
+
     <script src="js/load-header.js"></script>
+
+    <script>
+        document.getElementById('fecha').valueAsDate = new Date();
+
+        function mostrarOtroTipo(select) {
+            const container = document.getElementById('otro-tipo-container');
+            container.style.display = select.value === 'Otro' ? 'flex' : 'none';
+        }
+
+        async function cargarIncidencias() {
+            const tbody = document.getElementById('incidencias-body');
+            tbody.innerHTML = '<tr><td colspan="4" style="text-align: center;">Cargando...</td></tr>';
+
+            try {
+                const reportes = await api.reportesIncidencia.getAll();
+                const vehiculos = await api.vehiculos.getAll();
+                const incidencias = await api.incidencias.getAll();
+
+                if (reportes.length === 0) {
+                    tbody.innerHTML = '<tr><td colspan="4" style="text-align: center;">No hay incidencias reportadas</td></tr>';
+                    return;
+                }
+
+                tbody.innerHTML = reportes.slice(0, 10).map(r => {
+                    const vehiculo = vehiculos.find(v => v.id === r.vehiculoId);
+                    const incidencia = incidencias.find(i => i.id === r.incidenciaId);
+                    const fecha = new Date(r.fechaHora);
+
+                    return `
+                        <tr>
+                            <td>${fecha.toLocaleDateString('es-CO')} ${fecha.toLocaleTimeString('es-CO', { hour: '2-digit', minute: '2-digit' })}</td>
+                            <td><strong>${vehiculo ? vehiculo.placa : 'N/A'}</strong></td>
+                            <td>${incidencia ? incidencia.nombre : 'N/A'}</td>
+                            <td>—</td>
+                        </tr>
+                    `;
+                }).join('');
+
+            } catch (error) {
+                console.error('Error:', error);
+                tbody.innerHTML = '<tr><td colspan="4" style="text-align: center; color: var(--error);">Error al cargar</td></tr>';
+            }
+        }
+
+        document.getElementById('form-incidencia').addEventListener('submit', async (e) => {
+            e.preventDefault();
+
+            const placa = document.getElementById('vehiculo-placa').value.toUpperCase();
+            const fecha = document.getElementById('fecha').value;
+            const hora = document.getElementById('hora').value;
+            let tipoIncidencia = document.getElementById('tipo-incidencia').value;
+            const descripcion = document.getElementById('descripcion').value;
+
+            if (tipoIncidencia === 'Otro') {
+                tipoIncidencia = document.getElementById('otro-tipo').value;
+            }
+
+            try {
+                // Buscar vehículo directamente por placa (sin descargar todos)
+                let vehiculo;
+                try {
+                    vehiculo = await api.vehiculos.getByPlaca(placa);
+                } catch (_) {
+                    vehiculo = null;
+                }
+
+                if (!vehiculo) {
+                    showNotification('Vehículo no encontrado. Verifique la placa.', 'error');
+                    return;
+                }
+
+                let incidencias = await api.incidencias.getAll();
+                let incidencia = incidencias.find(i => i.nombre === tipoIncidencia);
+
+                if (!incidencia) {
+                    try {
+                        const nueva = await api.incidencias.create({ nombre: tipoIncidencia });
+                        incidencias = await api.incidencias.getAll();
+                        incidencia = incidencias.find(i => i.nombre === tipoIncidencia);
+                    } catch (err) {
+                        console.error('Error creando incidencia:', err);
+                    }
+                }
+
+                if (!incidencia) {
+                    showNotification('No se pudo crear el tipo de incidencia', 'error');
+                    return;
+                }
+
+                const fechaHora = `${fecha}T${hora}:00`;
+
+                await api.reportesIncidencia.create({
+                    vehiculoId: vehiculo.id,
+                    incidenciaId: incidencia.id,
+                    fechaHora: fechaHora
+                });
+
+                showNotification('Incidencia reportada exitosamente', 'success');
+                document.getElementById('form-incidencia').reset();
+                document.getElementById('fecha').valueAsDate = new Date();
+                cargarIncidencias();
+
+            } catch (error) {
+                console.error('Error:', error);
+                showNotification(error.message || 'Error al reportar incidencia', 'error');
+            }
+        });
+
+        document.addEventListener('DOMContentLoaded', cargarIncidencias);
+    </script>
 </body>
 
 </html>

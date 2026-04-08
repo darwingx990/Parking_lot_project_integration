@@ -13,7 +13,9 @@ router.post('/', async (req, res) => {
 
 router.get('/', async (req, res) => {
     try {
-        const usuarios = await usuarioService.obtenerUsuarios();
+        const limite = parseInt(req.query.limite) || 100;
+        const pagina = parseInt(req.query.pagina) || 0;
+        const usuarios = await usuarioService.obtenerUsuarios(limite, pagina * limite);
         res.status(200).json(usuarios);
     } catch (error) {
         res.status(500).json({ error: error.message });

@@ -31,13 +31,14 @@ class AccesoSalidasService {
         }
     }
 
-    async obtenerAccesoSalidas() {
+    async obtenerAccesoSalidas(limite = 100, offset = 0) {
         try {
             const result = await sql`
                 SELECT a.*, v.placa as vehiculo_placa
                 FROM "ACCESO_SALIDAS" a
                 JOIN "VEHICULO" v ON a."VEHICULO_id" = v.id
                 ORDER BY a.fecha_hora DESC
+                LIMIT ${limite} OFFSET ${offset}
             `;
             
             return result.map(row => ({
@@ -132,15 +133,20 @@ class AccesoSalidasService {
 
     async actualizarAccesoSalidas(id, datosActualizados) {
         try {
-            const { movimiento, fechaHora, puerta, tiempoEstadia, vehiculoId } = datosActualizados;
-            
+            const valores = {};
+            if (datosActualizados.movimiento !== undefined) valores.movimiento = datosActualizados.movimiento;
+            if (datosActualizados.fechaHora !== undefined) valores.fecha_hora = datosActualizados.fechaHora;
+            if (datosActualizados.puerta !== undefined) valores.puerta = datosActualizados.puerta;
+            if (datosActualizados.tiempoEstadia !== undefined) valores.tiempo_estadia = datosActualizados.tiempoEstadia;
+            if (datosActualizados.vehiculoId !== undefined) valores['"VEHICULO_id"'] = datosActualizados.vehiculoId;
+
+            if (Object.keys(valores).length === 0) {
+                throw new Error('No hay campos para actualizar.');
+            }
+
             const result = await sql`
                 UPDATE "ACCESO_SALIDAS"
-                SET movimiento = ${movimiento || sql.unsafe('movimiento')},
-                    fecha_hora = ${fechaHora !== undefined ? fechaHora : sql.unsafe('fecha_hora')},
-                    puerta = ${puerta !== undefined ? puerta : sql.unsafe('puerta')},
-                    tiempo_estadia = ${tiempoEstadia !== undefined ? tiempoEstadia : sql.unsafe('tiempo_estadia')},
-                    "VEHICULO_id" = ${vehiculoId || sql.unsafe('"VEHICULO_id"')}
+                SET ${sql(valores)}
                 WHERE id = ${id}
                 RETURNING id
             `;

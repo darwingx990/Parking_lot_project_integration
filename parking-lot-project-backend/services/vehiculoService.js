@@ -31,13 +31,14 @@ class VehiculoService {
         }
     }
 
-    async obtenerVehiculos() {
+    async obtenerVehiculos(limite = 100, offset = 0) {
         try {
             const result = await sql`
                 SELECT v.*, u.numero_documento as usuario_documento, u.primer_nombre as usuario_nombre
                 FROM "VEHICULO" v
                 JOIN "USUARIO" u ON v."USUARIO_id_usuario" = u.id_usuario
                 ORDER BY v.id
+                LIMIT ${limite} OFFSET ${offset}
             `;
             
             return result.map(row => ({

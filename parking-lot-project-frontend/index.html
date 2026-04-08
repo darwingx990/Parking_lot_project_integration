@@ -1,13 +1,13 @@
-<!doctype html>
+﻿<!doctype html>
 <html lang="es">
 
 <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>Disponibilidad de Parqueaderos</title>
-    <link rel="icon" type="image/jpg" href="assets/images/Logo P.png" />
-    <link rel="stylesheet" href="styles/styles.css" />
+    <title>BioParking - Disponibilidad</title>
     <link rel="icon" type="image/png" href="assets/images/Logo_P.png" />
+    <link rel="stylesheet" href="styles/styles.css" />
+    <script src="js/api.js"></script>
 </head>
 
 <body id="espacios-page">
@@ -15,74 +15,146 @@
         <h1>Visualización de Celdas de Parqueo</h1>
         <p class="subtitle">Estado general por áreas y niveles</p>
 
-        <section class="parking-container">
-            <div class="area">
-                <h2>Área A - Nivel 1</h2>
-                <div class="cells">
-                    <div class="cell disponible carro">A-01</div>
-                    <div class="cell ocupada carro">A-02</div>
-                    <div class="cell disponible moto">A-03</div>
-                    <div class="cell disponible carro">A-04</div>
-                    <div class="cell disponible carro">A-05</div>
-                    <div class="cell disponible moto">A-06</div>
-                    <div class="cell disponible carro">A-07</div>
-                    <div class="cell disponible carro">A-08</div>
-                    <div class="cell ocupada moto">A-09</div>
-                    <div class="cell disponible carro">A-10</div>
+        <!-- Resumen de disponibilidad -->
+        <div id="resumen-container"
+            style="display:none; display: flex; gap: 16px; margin-bottom: 24px; flex-wrap: wrap;">
+            <div
+                style="background: white; border: 1px solid var(--borde); border-radius: 10px; padding: 16px 24px; display: flex; align-items: center; gap: 12px; box-shadow: var(--shadow);">
+                <div style="width:12px; height:12px; border-radius:50%; background: var(--exito); flex-shrink:0;"></div>
+                <div>
+                    <div id="count-libres"
+                        style="font-size: 1.5rem; font-weight: 700; color: var(--exito); line-height:1;">—</div>
+                    <div style="font-size:0.78rem; color: var(--texto-muted); margin-top:2px;">Celdas libres</div>
                 </div>
             </div>
+            <div
+                style="background: white; border: 1px solid var(--borde); border-radius: 10px; padding: 16px 24px; display: flex; align-items: center; gap: 12px; box-shadow: var(--shadow);">
+                <div style="width:12px; height:12px; border-radius:50%; background: var(--error); flex-shrink:0;"></div>
+                <div>
+                    <div id="count-ocupadas"
+                        style="font-size: 1.5rem; font-weight: 700; color: var(--error); line-height:1;">—</div>
+                    <div style="font-size:0.78rem; color: var(--texto-muted); margin-top:2px;">Celdas ocupadas</div>
+                </div>
+            </div>
+            <div
+                style="background: white; border: 1px solid var(--borde); border-radius: 10px; padding: 16px 24px; display: flex; align-items: center; gap: 12px; box-shadow: var(--shadow);">
+                <div style="width:12px; height:12px; border-radius:50%; background: var(--morado); flex-shrink:0;">
+                </div>
+                <div>
+                    <div id="count-porcentaje"
+                        style="font-size: 1.5rem; font-weight: 700; color: var(--morado); line-height:1;">—%</div>
+                    <div style="font-size:0.78rem; color: var(--texto-muted); margin-top:2px;">Ocupación</div>
+                </div>
+            </div>
+        </div>
 
-            <div class="area">
-                <h2>Área B - Nivel 1</h2>
-                <div class="cells">
-                    <div class="cell disponible carro">B-01</div>
-                    <div class="cell disponible carro">B-02</div>
-                    <div class="cell disponible moto">B-03</div>
-                    <div class="cell disponible carro">B-04</div>
-                    <div class="cell disponible carro">B-05</div>
-                    <div class="cell disponible moto">B-06</div>
-                    <div class="cell disponible carro">B-07</div>
-                    <div class="cell disponible carro">B-08</div>
-                    <div class="cell disponible moto">B-09</div>
-                    <div class="cell disponible carro">B-10</div>
-                </div>
-            </div>
+        <div id="loading-indicator" style="text-align: center; padding: 40px;">
+            <div class="spinner"></div>
+            <p style="color: var(--texto-muted); font-size: 0.9rem; margin-top: 8px;">Cargando estado de celdas...</p>
+        </div>
 
-            <div class="area">
-                <h2>Área C - Nivel 2</h2>
-                <div class="cells">
-                    <div class="cell disponible carro">C-01</div>
-                    <div class="cell disponible carro">C-02</div>
-                    <div class="cell disponible moto">C-03</div>
-                    <div class="cell disponible carro">C-04</div>
-                    <div class="cell disponible carro">C-05</div>
-                    <div class="cell disponible moto">C-06</div>
-                    <div class="cell disponible carro">C-07</div>
-                    <div class="cell disponible carro">C-08</div>
-                    <div class="cell ocupada moto">C-09</div>
-                    <div class="cell disponible carro">C-10</div>
-                </div>
-            </div>
-
-            <div class="area">
-                <h2>Área D - Nivel 2</h2>
-                <div class="cells">
-                    <div class="cell disponible carro">D-01</div>
-                    <div class="cell disponible carro">D-02</div>
-                    <div class="cell disponible moto">D-03</div>
-                    <div class="cell disponible carro">D-04</div>
-                    <div class="cell disponible carro">D-05</div>
-                    <div class="cell disponible moto">D-06</div>
-                    <div class="cell disponible carro">D-07</div>
-                    <div class="cell disponible carro">D-08</div>
-                    <div class="cell disponible moto">D-09</div>
-                    <div class="cell disponible carro">D-10</div>
-                </div>
-            </div>
+        <section class="parking-container" id="parking-container" style="display: none;">
         </section>
+
+        <div style="text-align: center; margin-top: 30px;">
+            <button onclick="loadParkingStatus()"
+                style="background: var(--morado); color: white; border: none; padding: 12px 28px; border-radius: 8px; cursor: pointer; font-size: 14px; font-family: inherit; font-weight: 500; transition: background 0.2s, transform 0.15s; display: inline-flex; align-items: center; gap: 8px;">
+                🔄 Actualizar
+            </button>
+        </div>
     </main>
-    <!-- Header compartido -->
+
     <script src="js/load-header.js"></script>
+
+    <script>
+        async function loadParkingStatus() {
+            const container = document.getElementById('parking-container');
+            const loading = document.getElementById('loading-indicator');
+
+            loading.style.display = 'block';
+            container.style.display = 'none';
+
+            try {
+                const celdas = await api.getEstado.getAll();
+                const areas = {
+                    'A': { nombre: 'Área A — Nivel 1', celdas: [] },
+                    'B': { nombre: 'Área B — Nivel 1', celdas: [] },
+                    'C': { nombre: 'Área C — Nivel 2', celdas: [] },
+                    'D': { nombre: 'Área D — Nivel 2', celdas: [] }
+                };
+
+                let totalLibres = 0;
+                let totalOcupadas = 0;
+
+                celdas.forEach((celda, index) => {
+                    const letras = ['A', 'B', 'C', 'D'];
+                    const letra = letras[index % 4];
+                    const numero = String(index + 1).padStart(2, '0');
+                    const estado = celda.estado === 'Libre' ? 'disponible' : 'ocupada';
+
+                    if (estado === 'disponible') totalLibres++;
+                    else totalOcupadas++;
+
+                    if (areas[letra]) {
+                        areas[letra].celdas.push({
+                            id: celda.id,
+                            numero: `${letra}-${numero}`,
+                            tipo: celda.tipo.toLowerCase(),
+                            estado
+                        });
+                    }
+                });
+
+                // Actualizar contadores de resumen
+                const total = totalLibres + totalOcupadas;
+                document.getElementById('count-libres').textContent = totalLibres;
+                document.getElementById('count-ocupadas').textContent = totalOcupadas;
+                document.getElementById('count-porcentaje').textContent = total > 0
+                    ? Math.round((totalOcupadas / total) * 100) + '%'
+                    : '0%';
+                document.getElementById('resumen-container').style.display = 'flex';
+
+                container.innerHTML = '';
+
+                Object.keys(areas).forEach(key => {
+                    const area = areas[key];
+                    if (area.celdas.length === 0) return;
+                    const areaDiv = document.createElement('div');
+                    areaDiv.className = 'area';
+
+                    let cellsHtml = '';
+                    area.celdas.forEach(celda => {
+                        const icono = celda.estado === 'disponible' ? '' : (celda.tipo === 'carro' ? '🚗' : '🏍️');
+                        cellsHtml += `
+                            <div class="cell ${celda.estado} ${celda.tipo}" 
+                                 title="Celda ${celda.numero} — ${celda.tipo} — ${celda.estado === 'disponible' ? 'Libre' : 'Ocupada'}">
+                                ${icono ? `<div class="cell-icon">${icono}</div>` : ''}
+                                <span>${celda.numero}</span>
+                            </div>`;
+                    });
+
+                    areaDiv.innerHTML = `
+                        <h2>${area.nombre}</h2>
+                        <div class="cells">${cellsHtml}</div>
+                    `;
+                    container.appendChild(areaDiv);
+                });
+
+                loading.style.display = 'none';
+                container.style.display = 'grid';
+
+            } catch (error) {
+                console.error('Error cargando celdas:', error);
+                loading.innerHTML = '<div class="empty-state"><div class="empty-icon">⚠️</div><div class="empty-title">Error al cargar</div><div class="empty-sub">Verifique la conexión con el servidor</div></div>';
+                loading.style.display = 'block';
+            }
+        }
+
+        document.addEventListener('DOMContentLoaded', () => {
+            loadParkingStatus();
+            setInterval(loadParkingStatus, 30000);
+        });
+    </script>
 </body>
 
 </html>

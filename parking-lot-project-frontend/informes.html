@@ -1,86 +1,65 @@
-<!doctype html>
+﻿<!doctype html>
 <html lang="es">
 
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Reportes - Administrador | Parqueadero</title>
+  <title>Reportes | BioParking</title>
   <link rel="icon" type="image/png" href="assets/images/Logo_P.png" />
   <link rel="stylesheet" href="styles/styles.css" />
+  <script src="js/api.js"></script>
 </head>
 
 <body id="informes-page">
   <div class="layout">
     <main class="content">
       <header class="content-header">
-        <h1>Listado de Usuarios</h1>
-        <p>Reporte exclusivo para administrador</p>
+        <h1>Reportes y Estadísticas</h1>
+        <p>Panel de informes del parqueadero</p>
       </header>
 
       <section class="filters">
         <div class="filter-group">
-          <label for="fecha">Fecha</label>
-          <input type="date" id="fecha" />
+          <label for="fecha-inicio">Fecha inicio</label>
+          <input type="date" id="fecha-inicio" />
         </div>
         <div class="filter-group">
-          <label for="buscar">Buscar</label>
-          <input type="text" id="buscar" placeholder="Nombre, placa, cédula..." />
+          <label for="fecha-fin">Fecha fin</label>
+          <input type="date" id="fecha-fin" />
         </div>
-        <button class="btn-primary">Generar reporte</button>
+        <button class="btn-primary" onclick="aplicarFiltros()">Aplicar filtros</button>
       </section>
 
       <nav class="tabs-nav">
-        <button class="tab-btn active" data-tab="usuarios">Usuarios</button>
-        <button class="tab-btn" data-tab="vehiculos">Vehículos</button>
-        <button class="tab-btn" data-tab="entradas">Entradas</button>
-        <button class="tab-btn" data-tab="salidas">Salidas</button>
-        <button class="tab-btn" data-tab="incidencias">Incidencias</button>
-        <button class="tab-btn" data-tab="restricciones">
-          Restricciones
-        </button>
-        <button class="tab-btn" data-tab="ocupacion">Ocupación</button>
-        <button class="tab-btn" data-tab="celdas">Celdas</button>
-        <button class="tab-btn" data-tab="frecuencia">Frecuencia</button>
-        <button class="tab-btn" data-tab="horarios">Horarios</button>
+        <button class="tab-btn active" data-tab="usuarios" onclick="switchTab('usuarios', this)">Usuarios</button>
+        <button class="tab-btn" data-tab="vehiculos" onclick="switchTab('vehiculos', this)">Vehículos</button>
+        <button class="tab-btn" data-tab="accesos" onclick="switchTab('accesos', this)">Accesos</button>
+        <button class="tab-btn" data-tab="incidencias" onclick="switchTab('incidencias', this)">Incidencias</button>
+        <button class="tab-btn" data-tab="pico-placa" onclick="switchTab('pico-placa', this)">Pico y Placa</button>
+        <button class="tab-btn" data-tab="celdas" onclick="switchTab('celdas', this)">Celdas</button>
       </nav>
 
-      <!-- USUARIOS -->
       <div class="tab-panel active" id="tab-usuarios">
         <div class="table-container">
           <table>
             <thead>
               <tr>
-                <th>ID</th>
+                <th>Documento</th>
                 <th>Nombre</th>
-                <th>Cédula</th>
-                <th>Email</th>
-                <th>Teléfono</th>
-                <th>Rol</th>
+                <th>Correo</th>
+                <th>Celular</th>
+                <th>Estado</th>
               </tr>
             </thead>
-            <tbody>
+            <tbody id="tabla-usuarios">
               <tr>
-                <td>001</td>
-                <td>Maradona Gutierrez</td>
-                <td>123456789</td>
-                <td>eldiego69@gmail.com</td>
-                <td>3009876543</td>
-                <td>Cliente</td>
-              </tr>
-              <tr>
-                <td>002</td>
-                <td>Amparo no Grisales</td>
-                <td>987654321</td>
-                <td>amparito@gmail.com</td>
-                <td>3001234567</td>
-                <td>Cliente</td>
+                <td colspan="5" style="text-align: center;">Cargando...</td>
               </tr>
             </tbody>
           </table>
         </div>
       </div>
 
-      <!-- VEHÍCULOS -->
       <div class="tab-panel" id="tab-vehiculos">
         <div class="table-container">
           <table>
@@ -90,258 +69,310 @@
                 <th>Marca</th>
                 <th>Modelo</th>
                 <th>Color</th>
-                <th>Tipo de vehículo</th>
-                <th>ID Propietario</th>
-                <th>Nombre Propietario</th>
+                <th>Tipo</th>
+                <th>Propietario</th>
               </tr>
             </thead>
-            <tbody>
+            <tbody id="tabla-vehiculos">
               <tr>
-                <td>ABC123</td>
-                <td>Chevrolet</td>
-                <td>Onix</td>
-                <td>Rojo</td>
-                <td>Carro</td>
-                <td>001</td>
-                <td>Maradona Gutierrez</td>
+                <td colspan="6" style="text-align: center;">Cargando...</td>
               </tr>
             </tbody>
           </table>
         </div>
       </div>
 
-      <!-- ENTRADAS -->
-      <div class="tab-panel" id="tab-entradas">
+      <div class="tab-panel" id="tab-accesos">
         <div class="table-container">
           <table>
             <thead>
               <tr>
-                <th>ID Entrada</th>
+                <th>Fecha/Hora</th>
+                <th>Tipo</th>
                 <th>Placa</th>
-                <th>Tipo de vehículo</th>
-                <th>Fecha Ingreso</th>
-                <th>Hora Ingreso</th>
-                <th>Celda Asignada</th>
+                <th>Puerta</th>
+                <th>Estado</th>
               </tr>
             </thead>
-            <tbody>
+            <tbody id="tabla-accesos">
               <tr>
-                <td>1001</td>
-                <td>ABC123</td>
-                <td>Carro</td>
-                <td>2024-06-01</td>
-                <td>08:30</td>
-                <td>A1</td>
+                <td colspan="5" style="text-align: center;">Cargando...</td>
               </tr>
             </tbody>
           </table>
         </div>
       </div>
 
-      <!-- SALIDAS -->
-      <div class="tab-panel" id="tab-salidas">
-        <div class="table-container">
-          <table>
-            <thead>
-              <tr>
-                <th>ID Salida</th>
-                <th>Placa</th>
-                <th>Tipo de vehículo</th>
-                <th>Fecha Salida</th>
-                <th>Hora Salida</th>
-              </tr>
-            </thead>
-            <tbody>
-              <tr>
-                <td>2001</td>
-                <td>ABC123</td>
-                <td>Carro</td>
-                <td>2024-06-01</td>
-                <td>12:45</td>
-              </tr>
-            </tbody>
-          </table>
-        </div>
-      </div>
-
-      <!-- INCIDENCIAS -->
       <div class="tab-panel" id="tab-incidencias">
         <div class="table-container">
           <table>
             <thead>
               <tr>
-                <th>ID Incidencia</th>
-                <th>Fecha</th>
-                <th>Hora</th>
+                <th>Fecha/Hora</th>
                 <th>Placa</th>
-                <th>Descripción</th>
+                <th>Tipo Incidencia</th>
               </tr>
             </thead>
-            <tbody>
+            <tbody id="tabla-incidencias">
               <tr>
-                <td>3001</td>
-                <td>2024-06-01</td>
-                <td>10:15</td>
-                <td>ABC123</td>
-                <td>Pinchazo en la rueda delantera izquierda</td>
+                <td colspan="3" style="text-align: center;">Cargando...</td>
               </tr>
             </tbody>
           </table>
         </div>
       </div>
 
-      <!-- RESTRICCIONES -->
-      <div class="tab-panel" id="tab-restricciones">
+      <div class="tab-panel" id="tab-pico-placa">
         <div class="table-container">
           <table>
             <thead>
               <tr>
-                <th>Fecha</th>
-                <th>Placa</th>
-                <th>Restricción</th>
+                <th>Tipo Vehículo</th>
+                <th>Día</th>
+                <th>Dígito Restringido</th>
               </tr>
             </thead>
-            <tbody>
+            <tbody id="tabla-pico-placa">
               <tr>
-                <td>2024-06-01</td>
-                <td>XYZ789</td>
-                <td>Pico y placa</td>
+                <td colspan="3" style="text-align: center;">Cargando...</td>
               </tr>
             </tbody>
           </table>
         </div>
       </div>
 
-      <!-- OCUPACIÓN -->
-      <div class="tab-panel" id="tab-ocupacion">
+      <div class="tab-panel" id="tab-celdas">
+        <h3 style="margin: 16px 0; color: var(--morado);">Estado de Celdas</h3>
         <div class="table-container">
           <table>
             <thead>
               <tr>
-                <th>Fecha</th>
-                <th>Total Celdas</th>
-                <th>Celdas Ocupadas</th>
-                <th>Celdas Libres</th>
+                <th>ID Celda</th>
+                <th>Tipo</th>
+                <th>Estado</th>
                 <th>Ocupación</th>
               </tr>
             </thead>
-            <tbody>
+            <tbody id="tabla-celdas">
               <tr>
-                <td>2024-06-01</td>
-                <td>40</td>
-                <td>10</td>
-                <td>30</td>
-                <td>
-                  <div class="occ-bar-wrap">
-                    <div class="occ-bar">
-                      <div class="occ-bar-fill" style="width: 25%"></div>
-                    </div>
-                    <span>25%</span>
-                  </div>
-                </td>
+                <td colspan="4" style="text-align: center;">Cargando...</td>
               </tr>
             </tbody>
           </table>
         </div>
       </div>
 
-      <!-- CELDAS -->
-      <div class="tab-panel" id="tab-celdas">
-        <div class="table-container">
-          <table>
-            <thead>
-              <tr>
-                <th>Número de Celda</th>
-                <th>Sector</th>
-                <th>Cantidad de Usos</th>
-                <th>Tiempo Ocupación</th>
-              </tr>
-            </thead>
-            <tbody>
-              <tr>
-                <td>A1</td>
-                <td>Sector 1</td>
-                <td>5</td>
-                <td>10 horas</td>
-              </tr>
-            </tbody>
-          </table>
-        </div>
-      </div>
-
-      <!-- FRECUENCIA -->
-      <div class="tab-panel" id="tab-frecuencia">
-        <div class="table-container">
-          <table>
-            <thead>
-              <tr>
-                <th>Placa</th>
-                <th>Propietario</th>
-                <th>Cantidad de Ingresos</th>
-                <th>Tiempo Promedio de Uso</th>
-              </tr>
-            </thead>
-            <tbody>
-              <tr>
-                <td>ABC123</td>
-                <td>Maradona Gutierrez</td>
-                <td>3</td>
-                <td>4 horas</td>
-              </tr>
-            </tbody>
-          </table>
-        </div>
-      </div>
-
-      <!-- HORARIOS -->
-      <div class="tab-panel" id="tab-horarios">
-        <div class="table-container">
-          <table>
-            <thead>
-              <tr>
-                <th>Día</th>
-                <th>Franja Horaria</th>
-                <th>% de Ocupación</th>
-              </tr>
-            </thead>
-            <tbody>
-              <tr>
-                <td>Lunes</td>
-                <td>08:00 - 12:00</td>
-                <td>
-                  <div class="occ-bar-wrap">
-                    <div class="occ-bar">
-                      <div class="occ-bar-fill" style="width: 75%"></div>
-                    </div>
-                    <span>75%</span>
-                  </div>
-                </td>
-              </tr>
-            </tbody>
-          </table>
-        </div>
-      </div>
     </main>
   </div>
 
+  <script src="js/load-header.js"></script>
+
   <script>
-    document.querySelectorAll(".tab-btn").forEach((btn) => {
-      btn.addEventListener("click", () => {
-        document
-          .querySelectorAll(".tab-btn")
-          .forEach((b) => b.classList.remove("active"));
-        document
-          .querySelectorAll(".tab-panel")
-          .forEach((p) => p.classList.remove("active"));
+    let datosCache = {
+      usuarios: [],
+      vehiculos: [],
+      accesos: [],
+      incidencias: [],
+      picoPlaca: [],
+      celdas: []
+    };
+
+    function switchTab(name, btn) {
+      document.querySelectorAll(".tab-btn").forEach(b => b.classList.remove("active"));
+      document.querySelectorAll(".tab-panel").forEach(p => p.classList.remove("active"));
+
+      if (btn) {
         btn.classList.add("active");
-        document
-          .getElementById("tab-" + btn.dataset.tab)
-          .classList.add("active");
-      });
+      } else {
+        document.querySelector(`[data-tab="${name}"]`)?.classList.add("active");
+      }
+
+      document.getElementById("tab-" + name)?.classList.add("active");
+
+      cargarDatosTab(name);
+    }
+
+    async function cargarDatosTab(tab) {
+      try {
+        switch (tab) {
+          case 'usuarios':
+            datosCache.usuarios = await api.usuarios.getAll();
+            renderizarUsuarios();
+            break;
+          case 'vehiculos':
+            datosCache.vehiculos = await api.vehiculos.getAll();
+            datosCache.usuarios = await api.usuarios.getAll();
+            renderizarVehiculos();
+            break;
+          case 'accesos':
+            datosCache.accesos = await api.accesoSalidas.getAll();
+            datosCache.vehiculos = await api.vehiculos.getAll();
+            renderizarAccesos();
+            break;
+          case 'incidencias':
+            datosCache.incidencias = await api.reportesIncidencia.getAll();
+            datosCache.vehiculos = await api.vehiculos.getAll();
+            await cargarTiposIncidencias();
+            renderizarIncidencias();
+            break;
+          case 'pico-placa':
+            datosCache.picoPlaca = await api.picoPlaca.getAll();
+            renderizarPicoPlaca();
+            break;
+          case 'celdas':
+            datosCache.celdas = await api.getEstado.getAll();
+            renderizarCeldas();
+            break;
+        }
+      } catch (error) {
+        console.error('Error cargando datos:', error);
+      }
+    }
+
+    function renderizarUsuarios() {
+      const tbody = document.getElementById('tabla-usuarios');
+      if (datosCache.usuarios.length === 0) {
+        tbody.innerHTML = '<tr><td colspan="5" style="text-align: center;">No hay usuarios</td></tr>';
+        return;
+      }
+      tbody.innerHTML = datosCache.usuarios.map(u => `
+        <tr>
+          <td>${u.tipoDocumento} ${u.numeroDocumento}</td>
+          <td>${u.primerNombre} ${u.primerApellido}</td>
+          <td>${u.direccionCorreo || '-'}</td>
+          <td>${u.numeroCelular || '-'}</td>
+          <td><span class="status-hint ${u.estado === 'activo' ? 'active' : 'inactive'}">● ${u.estado}</span></td>
+        </tr>
+      `).join('');
+    }
+
+    function renderizarVehiculos() {
+      const tbody = document.getElementById('tabla-vehiculos');
+      if (datosCache.vehiculos.length === 0) {
+        tbody.innerHTML = '<tr><td colspan="6" style="text-align: center;">No hay vehículos</td></tr>';
+        return;
+      }
+      tbody.innerHTML = datosCache.vehiculos.map(v => {
+        const usuario = datosCache.usuarios.find(u => u.id === v.usuarioId);
+        const nombre = usuario ? `${usuario.primerNombre} ${usuario.primerApellido}` : 'N/A';
+        return `
+          <tr>
+            <td><strong>${v.placa}</strong></td>
+            <td>${v.marca}</td>
+            <td>${v.modelo}</td>
+            <td>${v.color}</td>
+            <td>${v.tipo}</td>
+            <td>${nombre}</td>
+          </tr>
+        `;
+      }).join('');
+    }
+
+    function renderizarAccesos() {
+      const tbody = document.getElementById('tabla-accesos');
+      if (datosCache.accesos.length === 0) {
+        tbody.innerHTML = '<tr><td colspan="5" style="text-align: center;">No hay accesos</td></tr>';
+        return;
+      }
+      tbody.innerHTML = datosCache.accesos.slice(0, 50).map(a => {
+        const vehiculo = datosCache.vehiculos.find(v => v.id === a.vehiculoId);
+        const fecha = new Date(a.fechaHora);
+        const esEntrada = a.movimiento === 'Entrada';
+        return `
+          <tr>
+            <td>${fecha.toLocaleDateString('es-CO')} ${fecha.toLocaleTimeString('es-CO', { hour: '2-digit', minute: '2-digit' })}</td>
+            <td><span class="badge badge-${esEntrada ? 'entrada' : 'salida'}">${esEntrada ? '▲' : '▼'} ${a.movimiento}</span></td>
+            <td><strong>${vehiculo ? vehiculo.placa : 'N/A'}</strong></td>
+            <td>${a.puerta}</td>
+            <td><span class="badge badge-${esEntrada ? 'activo' : 'salida'}">${esEntrada ? '● En parqueadero' : '✓ Finalizado'}</span></td>
+          </tr>
+        `;
+      }).join('');
+    }
+
+    async function cargarTiposIncidencias() {
+      try {
+        datosCache.tiposIncidencia = await api.incidencias.getAll();
+      } catch {
+        datosCache.tiposIncidencia = [];
+      }
+    }
+
+    function renderizarIncidencias() {
+      const tbody = document.getElementById('tabla-incidencias');
+      if (datosCache.incidencias.length === 0) {
+        tbody.innerHTML = '<tr><td colspan="3" style="text-align: center;">No hay incidencias</td></tr>';
+        return;
+      }
+      tbody.innerHTML = datosCache.incidencias.slice(0, 50).map(r => {
+        const vehiculo = datosCache.vehiculos.find(v => v.id === r.vehiculoId);
+        const tipo = datosCache.tiposIncidencia?.find(t => t.id === r.incidenciaId);
+        const fecha = new Date(r.fechaHora);
+        return `
+          <tr>
+            <td>${fecha.toLocaleDateString('es-CO')} ${fecha.toLocaleTimeString('es-CO', { hour: '2-digit', minute: '2-digit' })}</td>
+            <td><strong>${vehiculo ? vehiculo.placa : 'N/A'}</strong></td>
+            <td>${tipo ? tipo.nombre : 'N/A'}</td>
+          </tr>
+        `;
+      }).join('');
+    }
+
+    function renderizarPicoPlaca() {
+      const tbody = document.getElementById('tabla-pico-placa');
+      if (datosCache.picoPlaca.length === 0) {
+        tbody.innerHTML = '<tr><td colspan="3" style="text-align: center;">No hay restricciones</td></tr>';
+        return;
+      }
+      tbody.innerHTML = datosCache.picoPlaca.map(r => `
+        <tr>
+          <td>${r.tipoVehiculo}</td>
+          <td>${r.dia}</td>
+          <td><strong>${r.numero}</strong></td>
+        </tr>
+      `).join('');
+    }
+
+    function renderizarCeldas() {
+      const tbody = document.getElementById('tabla-celdas');
+      if (datosCache.celdas.length === 0) {
+        tbody.innerHTML = '<tr><td colspan="4" style="text-align: center;">No hay celdas</td></tr>';
+        return;
+      }
+
+      const total = datosCache.celdas.length;
+      const ocupadas = datosCache.celdas.filter(c => c.estado === 'Ocupada').length;
+      const porcentaje = Math.round((ocupadas / total) * 100);
+
+      tbody.innerHTML = datosCache.celdas.map(c => {
+        const esLibre = c.estado === 'Libre';
+        return `
+          <tr>
+            <td><strong>${c.id}</strong></td>
+            <td>${c.tipo}</td>
+            <td><span class="badge badge-${esLibre ? 'entrada' : 'salida'}">${c.estado}</span></td>
+            <td>
+              <div class="occ-bar-wrap">
+                <div class="occ-bar">
+                  <div class="occ-bar-fill" style="width: ${porcentaje}%"></div>
+                </div>
+                <span>${porcentaje}%</span>
+              </div>
+            </td>
+          </tr>
+        `;
+      }).join('');
+    }
+
+    function aplicarFiltros() {
+      const tabActiva = document.querySelector('.tab-btn.active')?.dataset.tab || 'usuarios';
+      switchTab(tabActiva);
+    }
+
+    document.addEventListener('DOMContentLoaded', () => {
+      cargarDatosTab('usuarios');
     });
   </script>
-  <!-- Header compartido -->
-  <script src="js/load-header.js"></script>
 </body>
 
 </html>
