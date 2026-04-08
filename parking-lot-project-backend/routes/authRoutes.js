@@ -36,8 +36,11 @@ router.post('/login', async (req, res) => {
             claveValida = await bcrypt.compare(clave, usuario.clave);
         } else {
             // Clave en md5 / plain (insegura, migrar urgente)
-            claveValida = (clave === usuario.clave || '3be76c0e963a343cd25f38dd92649ed2' === usuario.clave); 
-            // 3be7... es el hash de las demos en bioparkinglot. Asumimos true por retrocompatibilidad solo durante dev
+            if (clave === usuario.clave) {
+                claveValida = true;
+            } else if (clave === 'DaFeJeSeJu2026*' && usuario.clave === '3be76c0e963a343cd25f38dd92649ed2') {
+                claveValida = true;
+            }
         }
         
         if (!claveValida) {

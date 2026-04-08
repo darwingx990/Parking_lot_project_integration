@@ -1,19 +1,19 @@
-<!DOCTYPE html>
+﻿<!DOCTYPE html>
 <html lang="es">
 
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Gestión de Vehículos | BioParking</title>
+  <title>GestiÃ³n de VehÃ­culos | BioParking</title>
   <link rel="icon" type="image/png" href="assets/images/Logo_P.png">
-  <link rel="stylesheet" href="styles/styles.css">
+  <link rel="stylesheet" href="css/styles.css">
   <script src="js/api.js"></script>
 </head>
 
 <body id="vehiculos-page">
   <main class="container">
     <section class="card">
-      <h2>Registro de Vehículo</h2>
+      <h2>Registro de VehÃ­culo</h2>
       <p class="role">Acceso: Administrador y Operador</p>
 
       <form id="form-registro-vehiculo" class="form">
@@ -47,23 +47,25 @@
         </label>
 
         <label>
-          ID Usuario (propietario)
-          <input type="number" id="vehiculo-usuario" placeholder="1" required>
+          Propietario
+          <select id="vehiculo-usuario" required>
+            <option value="">Cargando usuarios...</option>
+          </select>
         </label>
 
-        <button type="submit">Registrar Vehículo</button>
+        <button type="submit">Registrar VehÃ­culo</button>
       </form>
     </section>
 
     <section class="card">
-      <h2>Actualizar Información del Vehículo</h2>
+      <h2>Actualizar InformaciÃ³n del VehÃ­culo</h2>
       <p class="role admin">Acceso: Solo Administrador</p>
 
       <form id="form-actualizar-vehiculo" class="form">
         <label>
-          Placa del vehículo
+          Placa del vehÃ­culo
           <select id="actualizar-placa-select" required onchange="cargarDatosVehiculo(this)">
-            <option value="">Seleccione un vehículo</option>
+            <option value="">Seleccione un vehÃ­culo</option>
           </select>
         </label>
 
@@ -82,13 +84,13 @@
           <input type="text" id="nuevo-modelo" placeholder="Nuevo modelo">
         </label>
 
-        <button type="submit">Actualizar Vehículo</button>
+        <button type="submit">Actualizar VehÃ­culo</button>
       </form>
     </section>
 
     <section class="card">
-      <h2>Lista de Vehículos</h2>
-      <p class="role">Ver vehículos registrados</p>
+      <h2>Lista de VehÃ­culos</h2>
+      <p class="role">Ver vehÃ­culos registrados</p>
 
       <div style="margin-bottom: 16px;">
         <input type="text" id="buscar-vehiculo" placeholder="Buscar por placa..." 
@@ -121,7 +123,7 @@
 
       <form id="form-pico-placa" class="form">
         <label>
-          Tipo de vehículo
+          Tipo de vehÃ­culo
           <select id="pp-tipo" required>
             <option value="">Seleccione</option>
             <option value="Carro">Carro</option>
@@ -130,21 +132,21 @@
         </label>
 
         <label>
-          Día de la semana
+          DÃ­a de la semana
           <select id="pp-dia" required>
             <option value="">Seleccione</option>
             <option value="Lunes">Lunes</option>
             <option value="Martes">Martes</option>
-            <option value="Miércoles">Miércoles</option>
+            <option value="MiÃ©rcoles">MiÃ©rcoles</option>
             <option value="Jueves">Jueves</option>
             <option value="Viernes">Viernes</option>
-            <option value="Sábado">Sábado</option>
+            <option value="SÃ¡bado">SÃ¡bado</option>
             <option value="Domingo">Domingo</option>
           </select>
         </label>
 
         <label>
-          Último dígito de placa restringido
+          Ãšltimo dÃ­gito de placa restringido
           <select id="pp-digito" required>
             <option value="">Seleccione</option>
             <option value="0">0</option>
@@ -160,7 +162,7 @@
           </select>
         </label>
 
-        <button type="submit">Agregar Restricción</button>
+        <button type="submit">Agregar RestricciÃ³n</button>
       </form>
 
       <div style="margin-top: 20px;">
@@ -170,8 +172,8 @@
             <thead>
               <tr>
                 <th>Tipo</th>
-                <th>Día</th>
-                <th>Dígito</th>
+                <th>DÃ­a</th>
+                <th>DÃ­gito</th>
                 <th>Acciones</th>
               </tr>
             </thead>
@@ -197,7 +199,7 @@
         renderizarTablaVehiculos(vehiculosCache);
         
         const select = document.getElementById('actualizar-placa-select');
-        select.innerHTML = '<option value="">Seleccione un vehículo</option>';
+        select.innerHTML = '<option value="">Seleccione un vehÃ­culo</option>';
         vehiculosCache.forEach(v => {
           select.innerHTML += `<option value="${v.id}">${v.placa} - ${v.marca}</option>`;
         });
@@ -219,7 +221,7 @@
       const tbody = document.getElementById('vehiculos-body');
       
       if (vehiculos.length === 0) {
-        tbody.innerHTML = '<tr><td colspan="6" style="text-align: center;">No hay vehículos</td></tr>';
+        tbody.innerHTML = '<tr><td colspan="6" style="text-align: center;">No hay vehÃ­culos</td></tr>';
         return;
       }
 
@@ -249,11 +251,11 @@
     }
 
     async function eliminarVehiculo(id) {
-      if (!confirm('¿Está seguro de eliminar este vehículo?')) return;
+      if (!confirm('Â¿EstÃ¡ seguro de eliminar este vehÃ­culo?')) return;
       
       try {
         await api.vehiculos.delete(id);
-        showNotification('Vehículo eliminado', 'success');
+        showNotification('VehÃ­culo eliminado', 'success');
         cargarVehiculos();
       } catch (error) {
         showNotification(error.message || 'Error al eliminar', 'error');
@@ -274,7 +276,7 @@
 
       try {
         await api.vehiculos.create(data);
-        showNotification('Vehículo registrado exitosamente', 'success');
+        showNotification('VehÃ­culo registrado exitosamente', 'success');
         document.getElementById('form-registro-vehiculo').reset();
         cargarVehiculos();
       } catch (error) {
@@ -303,7 +305,7 @@
 
       try {
         await api.vehiculos.update(vehiculoId, data);
-        showNotification('Vehículo actualizado', 'success');
+        showNotification('VehÃ­culo actualizado', 'success');
         document.getElementById('form-actualizar-vehiculo').reset();
         cargarVehiculos();
       } catch (error) {
@@ -343,11 +345,11 @@
     }
 
     async function eliminarPicoPlaca(id) {
-      if (!confirm('¿Eliminar esta restricción?')) return;
+      if (!confirm('Â¿Eliminar esta restricciÃ³n?')) return;
       
       try {
         await api.picoPlaca.delete(id);
-        showNotification('Restricción eliminada', 'success');
+        showNotification('RestricciÃ³n eliminada', 'success');
         cargarPicoPlaca();
       } catch (error) {
         showNotification(error.message || 'Error al eliminar', 'error');
@@ -365,7 +367,7 @@
 
       try {
         await api.picoPlaca.create(data);
-        showNotification('Restricción agregada', 'success');
+        showNotification('RestricciÃ³n agregada', 'success');
         document.getElementById('form-pico-placa').reset();
         cargarPicoPlaca();
       } catch (error) {
@@ -376,8 +378,24 @@
     document.addEventListener('DOMContentLoaded', () => {
       cargarVehiculos();
       cargarPicoPlaca();
+      cargarUsuariosParaSelect();
     });
+
+    async function cargarUsuariosParaSelect() {
+      const select = document.getElementById('vehiculo-usuario');
+      try {
+        const usuarios = await api.usuarios.getAll();
+        select.innerHTML = '<option value="">Seleccione un propietario</option>';
+        usuarios.forEach(u => {
+          select.innerHTML += `<option value="${u.id}">${u.primerNombre} ${u.primerApellido} (${u.numeroDocumento})</option>`;
+        });
+      } catch (error) {
+        select.innerHTML = '<option value="">Error cargando usuarios</option>';
+        console.error('Error cargando usuarios:', error);
+      }
+    }
   </script>
 </body>
 
 </html>
+

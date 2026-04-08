@@ -4,7 +4,9 @@ const accesoSalidasService = require('../services/accesoSalidasService');
 
 router.get('/', async (req, res) => {
     try {
-        const accesos = await accesoSalidasService.obtenerAccesoSalidas();
+        const limite = parseInt(req.query.limite) || 100;
+        const pagina = parseInt(req.query.pagina) || 0;
+        const accesos = await accesoSalidasService.obtenerAccesoSalidas(limite, pagina * limite);
         res.status(200).json(accesos);
     } catch (error) {
         res.status(500).json({ error: error.message });

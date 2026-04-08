@@ -1,4 +1,4 @@
-<header>
+﻿<header>
     <div class="header-container">
         <a href="index.html" class="logo1">
             <img src="assets/images/bioparking_transparente.png" alt="logo-parqueadero" />
@@ -9,16 +9,16 @@
                 <li class="dropdown">
                     <a href="#">Menu</a>
                     <ul class="submenu">
-                        <li><a href="incidencias.html">Incidencias</a></li>
-                        <li><a href="informes.html">Informes</a></li>
-                        <li><a href="registro-usuarios.html">Registro de Usuarios</a></li>
-                        <li><a href="registroVehiculos.html">Registro de Vehículos</a></li>
-                        <li><a href="registro-accesos.html">Registro de Accesos</a></li>
-                        <li><a href="index.html">Disponibilidad</a></li>
+                        <li data-roles="admin,operador,usuario"><a href="index.html">Disponibilidad</a></li>
+                        <li data-roles="admin,operador"><a href="registro-accesos.html">Registro de Accesos</a></li>
+                        <li data-roles="admin,operador"><a href="incidencias.html">Incidencias</a></li>
+                        <li data-roles="admin"><a href="registro-usuarios.html">Registro de Usuarios</a></li>
+                        <li data-roles="admin"><a href="registro-vehiculos.html">Registro de VehÃ­culos</a></li>
+                        <li data-roles="admin"><a href="informes.html">Informes</a></li>
                     </ul>
                 </li>
                 <li id="auth-section">
-                    <a href="login.html" id="login-link">Iniciar sesión</a>
+                    <a href="login.html" id="login-link">Iniciar sesiÃ³n</a>
                 </li>
             </ul>
         </nav>
@@ -43,6 +43,7 @@
         .user-role {
             font-size: 11px;
             color: var(--texto-muted);
+            text-transform: capitalize;
         }
         .btn-logout {
             background: var(--error);
@@ -53,9 +54,15 @@
             cursor: pointer;
             font-size: 12px;
             font-weight: 500;
+            font-family: inherit;
+            transition: background 0.2s;
         }
         .btn-logout:hover {
             background: #b91c1c;
+        }
+        .submenu li a.nav-active {
+            background-color: var(--morado) !important;
+            color: white !important;
         }
     </style>
 
@@ -71,17 +78,33 @@
                             <span class="user-name">${user.nombre}</span>
                             <span class="user-role">${user.rol}</span>
                         </div>
-                        <button class="btn-logout" onclick="logout()">Cerrar sesión</button>
+                        <button class="btn-logout" onclick="logout()">Cerrar sesiÃ³n</button>
                     </div>
                 `;
+
+                // Filtrar Ã­tems del menÃº segÃºn rol
+                const rol = user.rol;
+                document.querySelectorAll('[data-roles]').forEach(el => {
+                    const roles = el.dataset.roles.split(',');
+                    if (!roles.includes(rol)) el.remove();
+                });
             } else {
-                authSection.innerHTML = '<a href="login.html">Iniciar sesión</a>';
+                authSection.innerHTML = '<a href="login.html">Iniciar sesiÃ³n</a>';
             }
+
+            // Marcar link activo segÃºn pÃ¡gina actual
+            const path = window.location.pathname.split('/').pop() || 'index.html';
+            document.querySelectorAll('.submenu a').forEach(link => {
+                const href = link.getAttribute('href');
+                if (href && (path === href || (path === '' && href === 'index.html'))) {
+                    link.classList.add('nav-active');
+                }
+            });
         }
 
         function logout() {
             api.logout();
-            showNotification('Sesión cerrada', 'info');
+            showNotification('SesiÃ³n cerrada', 'info');
             window.location.href = 'login.html';
         }
 
@@ -92,3 +115,4 @@
         document.addEventListener('DOMContentLoaded', updateHeaderAuth);
     </script>
 </header>
+

@@ -1,11 +1,11 @@
-<!doctype html>
+﻿<!doctype html>
 <html lang="es">
 
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>BioParking - Login</title>
-  <link rel="stylesheet" href="styles/styles.css" />
+  <link rel="stylesheet" href="css/styles.css" />
   <link rel="icon" type="image/png" href="assets/images/Logo_P.png" />
   <script src="js/api.js"></script>
 </head>
@@ -16,21 +16,20 @@
 
     <form id="loginForm">
       <div class="input-group">
-        <span class="icon">🪪</span>
+        <span class="icon">ðŸªª</span>
         <input type="text" id="documento" placeholder="Documento" required />
       </div>
       <div class="input-group">
-        <span class="icon">🔒</span>
-        <input type="password" id="clave" placeholder="Contraseña" required />
+        <span class="icon">ðŸ”’</span>
+        <input type="password" id="clave" placeholder="ContraseÃ±a" required />
       </div>
-      <a href="olvidaste_contraseña.html" class="forgot">¿Olvidaste tu contraseña?</a>
+      <a href="olvidaste_contraseÃ±a.html" class="forgot">Â¿Olvidaste tu contraseÃ±a?</a>
       <a href="registro-usuarios.html" class="Crear-cuenta">Crear cuenta</a>
       <nav>
         <ul>
-          <a href="usuario.html" class="Crear-cuenta">Ingresar como usuario</a>
         </ul>
       </nav>
-      <button type="submit" class="btn-login">Login</button>
+      <button type="submit" class="btn-login" id="btn-submit">Login</button>
     </form>
   </div>
 
@@ -40,25 +39,39 @@
       
       const documento = document.getElementById('documento').value;
       const clave = document.getElementById('clave').value;
+      const btn = document.getElementById('btn-submit');
+
+      btn.disabled = true;
+      btn.textContent = 'Iniciando sesiÃ³n...';
 
       try {
         const user = await api.login(documento, clave);
         showNotification(`Bienvenido ${user.nombre}`, 'success');
         
-        if (user.rol === 'administrador' || user.rol === 'operador') {
-          window.location.href = 'index.html';
-        } else {
-          window.location.href = 'index.html';
-        }
+        setTimeout(() => {
+            if (user.rol === 'administrador' || user.rol === 'operador') {
+              window.location.href = 'index.html';
+            } else {
+              window.location.href = 'usuario.html';
+            }
+        }, 1000);
       } catch (error) {
         showNotification(error.message, 'error');
+        btn.disabled = false;
+        btn.textContent = 'Login';
       }
     });
 
     if (api.isAuthenticated()) {
-      window.location.href = 'index.html';
+      const user = api.getCurrentUser();
+      if (user.rol === 'administrador' || user.rol === 'operador') {
+          window.location.href = 'index.html';
+      } else {
+          window.location.href = 'usuario.html';
+      }
     }
   </script>
 </body>
 
 </html>
+

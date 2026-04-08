@@ -1,4 +1,6 @@
-const API_BASE_URL = 'http://localhost:3000/api';
+const API_BASE_URL = window.location.hostname === 'localhost' || window.location.hostname === '127.0.0.1'
+    ? 'http://localhost:3000/api'
+    : 'https://' + window.location.hostname + '/api';
 
 const api = {
     baseURL: API_BASE_URL,
@@ -8,8 +10,8 @@ const api = {
             'Content-Type': 'application/json'
         };
         const user = this.getCurrentUser();
-        if (user && user.rol) {
-            headers['rol'] = user.rol;
+        if (user && user.token) {
+            headers['Authorization'] = `Bearer ${user.token}`;
         }
         return headers;
     },
@@ -90,40 +92,7 @@ const api = {
     },
 
     async login(numeroDocumento, clave) {
-        const usuarios = await this.get('/usuarios');
-        const usuario = usuarios.find(u =>
-            u.numeroDocumento === numeroDocumento && u.clave === clave
-        );
-
-        if (!usuario) {
-            throw new Error('Documento o contraseña incorrectos');
-        }
-
-        let rol = 'usuario';
-        try {
-            const admins = await this.get('/administradores');
-            if (admins.find(a => a.usuarioId === usuario.id)) {
-                rol = 'administrador';
-            }
-        } catch (e) {}
-
-        if (rol === 'usuario') {
-            try {
-                const ops = await this.get('/operadores');
-                if (ops.find(o => o.usuarioId === usuario.id)) {
-                    rol = 'operador';
-                }
-            } catch (e) {}
-        }
-
-        const userData = {
-            id: usuario.id,
-            numeroDocumento: usuario.numeroDocumento,
-            nombre: `${usuario.primerNombre} ${usuario.primerApellido}`,
-            rol: rol,
-            perfilId: usuario.perfilId
-        };
-
+        const userData = await this.post('/auth/login', { numeroDocumento, clave });
         this.setCurrentUser(userData);
         return userData;
     },
@@ -419,12 +388,21 @@ const api = {
     }
 };
 
+function escapeHTML(str) {
+    if (!str) return '';
+    return String(str)
+        .replace(/&/g, '&amp;')
+        .replace(/</g, '&lt;')
+        .replace(/>/g, '&gt;')
+        .replace(/"/g, '&quot;');
+}
+
 function showNotification(message, type = 'info') {
     const notification = document.createElement('div');
     notification.className = `notification notification-${type}`;
     notification.innerHTML = `
         <span class="notification-icon">${type === 'success' ? '✓' : type === 'error' ? '✗' : 'ℹ'}</span>
-        <span class="notification-message">${message}</span>
+        <span class="notification-message">${escapeHTML(message)}</span>
     `;
 
     const style = document.createElement('style');
@@ -505,3 +483,4 @@ window.api = api;
 window.showNotification = showNotification;
 window.formatDate = formatDate;
 window.formatDateOnly = formatDateOnly;
+window.escapeHTML = escapeHTML;

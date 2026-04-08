@@ -1,12 +1,12 @@
-<!doctype html>
+﻿<!doctype html>
 <html lang="es">
 
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Gestión de usuarios | BioParking</title>
+  <title>GestiÃ³n de usuarios | BioParking</title>
   <link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@300;400;500;600&family=DM+Mono:wght@400;500&display=swap" rel="stylesheet" />
-  <link rel="stylesheet" href="styles/styles.css" />
+  <link rel="stylesheet" href="css/styles.css" />
   <link rel="icon" type="image/png" href="assets/images/Logo_P.png" />
   <script src="js/api.js"></script>
 </head>
@@ -15,13 +15,13 @@
   <div class="container">
     <header>
       <div class="accent-bar"></div>
-      <h1>Gestión de usuarios</h1>
+      <h1>GestiÃ³n de usuarios</h1>
       <p>Administra, asigna y actualiza usuarios del sistema</p>
     </header>
 
     <nav class="tabs-nav" role="tablist">
       <button class="tab-btn active" role="tab" onclick="switchTab('registro', this)">Registro</button>
-      <button class="tab-btn" role="tab" onclick="switchTab('vehiculo', this)">Asignar vehículo</button>
+      <button class="tab-btn" role="tab" onclick="switchTab('vehiculo', this)">Asignar vehÃ­culo</button>
       <button class="tab-btn" role="tab" onclick="switchTab('actualizar', this)">Actualizar estado</button>
       <button class="tab-btn" role="tab" onclick="switchTab('lista', this)">Lista usuarios</button>
     </nav>
@@ -35,14 +35,14 @@
               <label>Tipo de documento</label>
               <select id="tipoDocumento" required>
                 <option value="">Seleccione</option>
-                <option value="CC">Cédula de ciudadanía</option>
-                <option value="CE">Cédula extranjera</option>
+                <option value="CC">CÃ©dula de ciudadanÃ­a</option>
+                <option value="CE">CÃ©dula extranjera</option>
                 <option value="TI">Tarjeta de identidad</option>
                 <option value="PASAPORTE">Pasaporte</option>
               </select>
             </div>
             <div class="form-group full">
-              <label>Número de documento</label>
+              <label>NÃºmero de documento</label>
               <input type="text" id="numeroDocumento" placeholder="Ej. 1234567890" required />
             </div>
             <div class="form-group">
@@ -51,27 +51,27 @@
             </div>
             <div class="form-group">
               <label>Segundo nombre</label>
-              <input type="text" id="segundoNombre" placeholder="Andrés" />
+              <input type="text" id="segundoNombre" placeholder="AndrÃ©s" />
             </div>
             <div class="form-group">
               <label>Primer apellido</label>
-              <input type="text" id="primerApellido" placeholder="Marín" required />
+              <input type="text" id="primerApellido" placeholder="MarÃ­n" required />
             </div>
             <div class="form-group">
               <label>Segundo apellido</label>
               <input type="text" id="segundoApellido" placeholder="Torres" />
             </div>
             <div class="form-group full">
-              <label>Correo electrónico</label>
+              <label>Correo electrÃ³nico</label>
               <input type="email" id="correo" placeholder="usuario@correo.com" required />
             </div>
             <div class="form-group">
-              <label>Número de celular</label>
+              <label>NÃºmero de celular</label>
               <input type="tel" id="celular" placeholder="300 000 0000" required />
             </div>
             <div class="form-group">
-              <label>Contraseña</label>
-              <input type="password" id="clave" placeholder="Contraseña" required />
+              <label>ContraseÃ±a</label>
+              <input type="password" id="clave" placeholder="ContraseÃ±a" required />
             </div>
             <div class="form-group full">
               <label>Tipo de usuario</label>
@@ -90,8 +90,8 @@
 
     <div class="tab-panel" id="tab-vehiculo">
       <div class="card">
-        <h2>Asignar vehículo a usuario</h2>
-        <p class="info-note">Selecciona un usuario registrado e ingresa los datos del vehículo a asignar.</p>
+        <h2>Asignar vehÃ­culo a usuario</h2>
+        <p class="info-note">Selecciona un usuario registrado e ingresa los datos del vehÃ­culo a asignar.</p>
         <form id="form-asignar-vehiculo">
           <div class="form-grid">
             <div class="form-group full">
@@ -101,7 +101,7 @@
               </select>
             </div>
             <div class="form-group">
-              <label>Placa del vehículo</label>
+              <label>Placa del vehÃ­culo</label>
               <input type="text" id="vehiculo-placa" placeholder="Ej. ABC123" required />
             </div>
             <div class="form-group">
@@ -117,7 +117,7 @@
               <input type="text" id="vehiculo-color" placeholder="Ej. Negro" required />
             </div>
             <div class="form-group full">
-              <label>Tipo de vehículo</label>
+              <label>Tipo de vehÃ­culo</label>
               <select id="vehiculo-tipo" required>
                 <option value="">Seleccione</option>
                 <option value="Carro">Carro</option>
@@ -125,7 +125,7 @@
               </select>
             </div>
           </div>
-          <button type="submit" class="btn btn-primary" style="margin-top: 24px">Asignar vehículo</button>
+          <button type="submit" class="btn btn-primary" style="margin-top: 24px">Asignar vehÃ­culo</button>
         </form>
       </div>
     </div>
@@ -216,7 +216,7 @@
           select.innerHTML = '<option value="">Seleccione un usuario</option>';
           usuariosCache.forEach(u => {
             const nombre = `${u.primerNombre} ${u.primerApellido}`;
-            select.innerHTML += `<option value="${u.id}">${nombre} (${u.numeroDocumento})</option>`;
+            select.innerHTML += `<option value="${escapeHTML(u.id)}">${escapeHTML(nombre)} (${escapeHTML(u.numeroDocumento)})</option>`;
           });
         });
       } catch (error) {
@@ -230,7 +230,7 @@
       if (usuario) {
         document.getElementById('estado-actual-container').style.display = 'block';
         const badge = document.getElementById('estado-actual');
-        badge.textContent = usuario.estado === 'activo' ? '● Activo' : '● Inactivo';
+        badge.textContent = usuario.estado === 'activo' ? 'â— Activo' : 'â— Inactivo';
         badge.className = 'status-hint ' + (usuario.estado === 'activo' ? 'active' : 'inactive');
       }
     }
@@ -267,13 +267,13 @@
 
       tbody.innerHTML = usuarios.map(u => `
         <tr>
-          <td>${u.tipoDocumento} ${u.numeroDocumento}</td>
-          <td>${u.primerNombre} ${u.primerApellido}</td>
-          <td>${u.direccionCorreo || '-'}</td>
-          <td>${u.numeroCelular || '-'}</td>
-          <td><span class="status-hint ${u.estado === 'activo' ? 'active' : 'inactive'}">● ${u.estado === 'activo' ? 'Activo' : 'Inactivo'}</span></td>
+          <td>${escapeHTML(u.tipoDocumento)} ${escapeHTML(u.numeroDocumento)}</td>
+          <td>${escapeHTML(u.primerNombre)} ${escapeHTML(u.primerApellido)}</td>
+          <td>${escapeHTML(u.direccionCorreo) || '-'}</td>
+          <td>${escapeHTML(u.numeroCelular) || '-'}</td>
+          <td><span class="status-hint ${u.estado === 'activo' ? 'active' : 'inactive'}">â— ${u.estado === 'activo' ? 'Activo' : 'Inactivo'}</span></td>
           <td>
-            <button onclick="eliminarUsuario(${u.id})" style="background: var(--error); color: white; border: none; padding: 5px 10px; border-radius: 4px; cursor: pointer; font-size: 12px;">
+            <button onclick="eliminarUsuario(${escapeHTML(u.id)})" style="background: var(--error); color: white; border: none; padding: 5px 10px; border-radius: 4px; cursor: pointer; font-size: 12px;">
               Eliminar
             </button>
           </td>
@@ -282,7 +282,7 @@
     }
 
     async function eliminarUsuario(id) {
-      if (!confirm('¿Está seguro de eliminar este usuario?')) return;
+      if (!confirm('Â¿EstÃ¡ seguro de eliminar este usuario?')) return;
       
       try {
         await api.usuarios.delete(id);
@@ -344,10 +344,10 @@
 
       try {
         await api.vehiculos.create(data);
-        showNotification('Vehículo asignado exitosamente', 'success');
+        showNotification('VehÃ­culo asignado exitosamente', 'success');
         document.getElementById('form-asignar-vehiculo').reset();
       } catch (error) {
-        showNotification(error.message || 'Error al asignar vehículo', 'error');
+        showNotification(error.message || 'Error al asignar vehÃ­culo', 'error');
       }
     });
 
@@ -372,3 +372,4 @@
 </body>
 
 </html>
+

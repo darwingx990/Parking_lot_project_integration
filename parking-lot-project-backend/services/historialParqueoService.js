@@ -30,7 +30,7 @@ class HistorialParqueoService {
         }
     }
 
-    async obtenerHistoriales() {
+    async obtenerHistoriales(limite = 100, offset = 0) {
         try {
             const result = await sql`
                 SELECT hp.*, c.tipo as celda_tipo, v.placa as vehiculo_placa, v.marca as vehiculo_marca
@@ -38,6 +38,7 @@ class HistorialParqueoService {
                 JOIN "CELDA" c ON hp.celda_id = c.id
                 JOIN "VEHICULO" v ON hp.vehiculo_id = v.id
                 ORDER BY hp.fecha_hora DESC
+                LIMIT ${limite} OFFSET ${offset}
             `;
             
             return result.map(row => ({

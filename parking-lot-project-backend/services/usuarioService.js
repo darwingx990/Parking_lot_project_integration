@@ -37,13 +37,14 @@ class UsuarioService {
         }
     }
 
-    async obtenerUsuarios() {
+    async obtenerUsuarios(limite = 100, offset = 0) {
         try {
             const result = await sql`
                 SELECT u.*, p.perfil 
                 FROM "USUARIO" u
                 JOIN "PERFIL_USUARIO" p ON u."PERFIL_USUARIO_id" = p.id
                 ORDER BY u.id_usuario
+                LIMIT ${limite} OFFSET ${offset}
             `;
             
             return result.map(row => ({

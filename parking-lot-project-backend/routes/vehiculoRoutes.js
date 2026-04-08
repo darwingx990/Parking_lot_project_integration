@@ -4,7 +4,9 @@ const vehiculoService = require('../services/vehiculoService');
 
 router.get('/', async (req, res) => {
     try {
-        const vehiculos = await vehiculoService.obtenerVehiculos();
+        const limite = parseInt(req.query.limite) || 100;
+        const pagina = parseInt(req.query.pagina) || 0;
+        const vehiculos = await vehiculoService.obtenerVehiculos(limite, pagina * limite);
         res.status(200).json(vehiculos);
     } catch (error) {
         res.status(500).json({ error: error.message });
