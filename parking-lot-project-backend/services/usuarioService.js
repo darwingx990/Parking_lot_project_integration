@@ -1,5 +1,6 @@
 const sql = require('../config/db.js');
 const Usuario = require('../models/Usuario');
+const bcrypt = require('bcrypt');
 
 class UsuarioService {
     async crearUsuario(datos) {
@@ -10,9 +11,14 @@ class UsuarioService {
                 throw new Error('Los campos obligatorios son: tipoDocumento, numeroDocumento, primerNombre, primerApellido, direccionCorreo, numeroCelular, perfilId.');
             }
             
+            let claveHash = null;
+            if (clave) {
+                claveHash = await bcrypt.hash(clave, 12);
+            }
+            
             const result = await sql`
                 INSERT INTO "USUARIO" (tipo_documento, numero_documento, primer_nombre, segundo_nombre, primer_apellido, segundo_apellido, direccion_correo, numero_celular, foto_perfil, estado, clave, "PERFIL_USUARIO_id")
-                VALUES (${tipoDocumento}, ${numeroDocumento}, ${primerNombre}, ${segundoNombre || null}, ${primerApellido}, ${segundoApellido || null}, ${direccionCorreo}, ${numeroCelular}, ${fotoPerfil || null}, ${estado || 'activo'}, ${clave || null}, ${perfilId})
+                VALUES (${tipoDocumento}, ${numeroDocumento}, ${primerNombre}, ${segundoNombre || null}, ${primerApellido}, ${segundoApellido || null}, ${direccionCorreo}, ${numeroCelular}, ${fotoPerfil || null}, ${estado || 'activo'}, ${claveHash}, ${perfilId})
                 RETURNING *
             `;
             
@@ -113,71 +119,30 @@ class UsuarioService {
 
     async actualizarUsuario(id, datosActualizados) {
         try {
-            const campos = [];
             const valores = {};
             
-            if (datosActualizados.tipoDocumento !== undefined) {
-                campos.push('tipo_documento');
-                valores.tipoDocumento = datosActualizados.tipoDocumento;
-            }
-            if (datosActualizados.numeroDocumento !== undefined) {
-                campos.push('numero_documento');
-                valores.numeroDocumento = datosActualizados.numeroDocumento;
-            }
-            if (datosActualizados.primerNombre !== undefined) {
-                campos.push('primer_nombre');
-                valores.primerNombre = datosActualizados.primerNombre;
-            }
-            if (datosActualizados.segundoNombre !== undefined) {
-                campos.push('segundo_nombre');
-                valores.segundoNombre = datosActualizados.segundoNombre;
-            }
-            if (datosActualizados.primerApellido !== undefined) {
-                campos.push('primer_apellido');
-                valores.primerApellido = datosActualizados.primerApellido;
-            }
-            if (datosActualizados.segundoApellido !== undefined) {
-                campos.push('segundo_apellido');
-                valores.segundoApellido = datosActualizados.segundoApellido;
-            }
-            if (datosActualizados.direccionCorreo !== undefined) {
-                campos.push('direccion_correo');
-                valores.direccionCorreo = datosActualizados.direccionCorreo;
-            }
-            if (datosActualizados.numeroCelular !== undefined) {
-                campos.push('numero_celular');
-                valores.numeroCelular = datosActualizados.numeroCelular;
-            }
-            if (datosActualizados.fotoPerfil !== undefined) {
-                campos.push('foto_perfil');
-                valores.fotoPerfil = datosActualizados.fotoPerfil;
-            }
-            if (datosActualizados.estado !== undefined) {
-                campos.push('estado');
-                valores.estado = datosActualizados.estado;
-            }
+            if (datosActualizados.tipoDocumento !== undefined) valores.tipo_documento = datosActualizados.tipoDocumento;
+            if (datosActualizados.numeroDocumento !== undefined) valores.numero_documento = datosActualizados.numeroDocumento;
+            if (datosActualizados.primerNombre !== undefined) valores.primer_nombre = datosActualizados.primerNombre;
+            if (datosActualizados.segundoNombre !== undefined) valores.segundo_nombre = datosActualizados.segundoNombre;
+            if (datosActualizados.primerApellido !== undefined) valores.primer_apellido = datosActualizados.primerApellido;
+            if (datosActualizados.segundoApellido !== undefined) valores.segundo_apellido = datosActualizados.segundoApellido;
+            if (datosActualizados.direccionCorreo !== undefined) valores.direccion_correo = datosActualizados.direccionCorreo;
+            if (datosActualizados.numeroCelular !== undefined) valores.numero_celular = datosActualizados.numeroCelular;
+            if (datosActualizados.fotoPerfil !== undefined) valores.foto_perfil = datosActualizados.fotoPerfil;
+            if (datosActualizados.estado !== undefined) valores.estado = datosActualizados.estado;
+            
             if (datosActualizados.clave !== undefined) {
-                campos.push('clave');
-                valores.clave = datosActualizados.clave;
+                 valores.clave = await bcrypt.hash(datosActualizados.clave, 12);
             }
             
-            if (campos.length === 0) {
+            if (Object.keys(valores).length === 0) {
                 throw new Error('No hay campos para actualizar.');
             }
             
             const result = await sql`
                 UPDATE "USUARIO"
-                SET tipo_documento = ${valores.tipoDocumento || sql.unsafe('tipo_documento')},
-                    numero_documento = ${valores.numeroDocumento || sql.unsafe('numero_documento')},
-                    primer_nombre = ${valores.primerNombre || sql.unsafe('primer_nombre')},
-                    segundo_nombre = ${valores.segundoNombre !== undefined ? valores.segundoNombre : sql.unsafe('segundo_nombre')},
-                    primer_apellido = ${valores.primerApellido || sql.unsafe('primer_apellido')},
-                    segundo_apellido = ${valores.segundoApellido !== undefined ? valores.segundoApellido : sql.unsafe('segundo_apellido')},
-                    direccion_correo = ${valores.direccionCorreo || sql.unsafe('direccion_correo')},
-                    numero_celular = ${valores.numeroCelular || sql.unsafe('numero_celular')},
-                    foto_perfil = ${valores.fotoPerfil !== undefined ? valores.fotoPerfil : sql.unsafe('foto_perfil')},
-                    estado = ${valores.estado || sql.unsafe('estado')},
-                    clave = ${valores.clave !== undefined ? valores.clave : sql.unsafe('clave')}
+                SET ${sql(valores)}
                 WHERE id_usuario = ${id}
                 RETURNING id_usuario
             `;
