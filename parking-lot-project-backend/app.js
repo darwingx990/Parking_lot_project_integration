@@ -3,6 +3,8 @@ const cors = require('cors');
 require('dotenv').config();
 
 const usuarioRoutes = require('./routes/usuarioRoutes');
+const authRoutes = require('./routes/authRoutes');
+const perfilRoutes = require('./routes/perfilRoutes');
 const administradorRoutes = require('./routes/administradorRoutes');
 const operadorRoutes = require('./routes/operadorRoutes');
 const reporteIncidenciaRoutes = require('./routes/reporteIncidenciaRoutes');
@@ -12,6 +14,9 @@ const getEstadoRoutes = require('./routes/getEstadoRoutes');
 const vehiculoRoutes = require('./routes/vehiculoRoutes');
 const accesoSalidasRoutes = require('./routes/accesoSalidasRoutes');
 const picoPlacaRoutes = require('./routes/picoPlacaRoutes');
+const reporteRoutes = require('./routes/reporteRoutes');
+
+const errorHandler = require('./middlewares/errorHandler');
 
 const app = express();
 const PORT = process.env.PORT || 3000;
@@ -22,6 +27,8 @@ app.use(express.json()); // Permite a la app procesar cuerpos JSON en las petici
 
 // Rutas de la API
 app.use('/api/usuarios', usuarioRoutes);
+app.use('/api/auth', authRoutes);
+app.use('/api/perfil', perfilRoutes);
 app.use('/api/administradores', administradorRoutes);
 app.use('/api/operadores', operadorRoutes);
 app.use('/api/reportes-incidencia', reporteIncidenciaRoutes);
@@ -31,10 +38,15 @@ app.use('/api/get-estado', getEstadoRoutes);
 app.use('/api/vehiculo', vehiculoRoutes);
 app.use('/api/acceso-salida', accesoSalidasRoutes);
 app.use('/api/pico-placa', picoPlacaRoutes);
+app.use('/api/reportes', reporteRoutes);
+
 // Ruta de prueba inicial
 app.get('/', (req, res) => {
     res.send('Servidor de Parking Lot funcionando correctamente.');
 });
+
+// Middleware de error centralizado
+app.use(errorHandler);
 
 // Levantar el servidor
 app.listen(PORT, () => {

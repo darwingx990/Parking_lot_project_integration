@@ -1,0 +1,232 @@
+const express = require('express');
+const router = express.Router();
+const sql = require('../config/db.js');
+
+router.get('/usuarios', async (req, res) => {
+    try {
+        const result = await sql`
+            SELECT u.*, p.perfil 
+            FROM "USUARIO" u
+            JOIN "PERFIL_USUARIO" p ON u."PERFIL_USUARIO_id" = p.id
+            ORDER BY u.id_usuario
+        `;
+        res.status(200).json(result);
+    } catch (error) {
+        res.status(500).json({ error: error.message });
+    }
+});
+
+router.get('/vehiculos', async (req, res) => {
+    try {
+        const result = await sql`
+            SELECT v.*, u.numero_documento as usuario_documento, 
+                   CONCAT(u.primer_nombre, ' ', u.primer_apellido) as usuario_nombre
+            FROM "VEHICULO" v
+            JOIN "USUARIO" u ON v."USUARIO_id_usuario" = u.id_usuario
+            ORDER BY v.id
+        `;
+        res.status(200).json(result);
+    } catch (error) {
+        res.status(500).json({ error: error.message });
+    }
+});
+
+router.get('/entradas', async (req, res) => {
+    try {
+        const { fecha } = req.query;
+        let query = `
+            SELECT a.*, v.placa as vehiculo_placa
+            FROM "ACCESO_SALIDAS" a
+            JOIN "VEHICULO" v ON a."VEHICULO_id" = v.id
+            WHERE a.movimiento = 'Entrada'
+        `;
+        
+        if (fecha) {
+            query += ` AND DATE(a.fecha_hora) = '${fecha}'`;
+        }
+        
+        query += ` ORDER BY a.fecha_hora DESC`;
+        
+        const result = await sql.unsafe(query);
+        res.status(200).json(result);
+    } catch (error) {
+        res.status(500).json({ error: error.message });
+    }
+});
+
+router.get('/salidas', async (req, res) => {
+    try {
+        const { fecha } = req.query;
+        let query = `
+            SELECT a.*, v.placa as vehiculo_placa
+            FROM "ACCESO_SALIDAS" a
+            JOIN "VEHICULO" v ON a."VEHICULO_id" = v.id
+            WHERE a.movimiento = 'Salida'
+        `;
+        
+        if (fecha) {
+            query += ` AND DATE(a.fecha_hora) = '${fecha}'`;
+        }
+        
+        query += ` ORDER BY a.fecha_hora DESC`;
+        
+        const result = await sql.unsafe(query);
+        res.status(200).json(result);
+    } catch (error) {
+        res.status(500).json({ error: error.message });
+    }
+});
+
+router.get('/incidencias', async (req, res) => {
+    try {
+        const result = await sql`
+            SELECT ri.*, v.placa as vehiculo_placa, i.nombre as incidencia_nombre
+            FROM "REPORTE_INCIDENCIA" ri
+            JOIN "VEHICULO" v ON ri."VEHICULO_id" = v.id
+            JOIN "INCIDENCIA" i ON ri."INCIDENCIA_id" = i.id
+            ORDER BY ri.fecha_hora DESC
+        `;
+        res.status(200).json(result);
+    } catch (error) {
+        res.status(500).json({ error: error.message });
+    }
+});
+
+router.get('/pico-placa/dia/:fecha', async (req, res) => {
+    try {
+        const fecha = new Date(req.params.fecha);
+        const diasSemana = ['Domingo', 'Lunes', 'Martes', 'Miércoles', 'Jueves', 'Viernes', 'Sábado'];
+        const dia = diasSemana[fecha.getDay()];
+        
+        const result = await sql`
+            SELECT pp.* 
+            FROM "PICO_PLACA" pp
+            WHERE pp.dia = ${dia}
+        `;
+        res.status(200).json({
+            fecha: req.params.fecha,
+            dia: dia,
+            restricciones: result,
+            totalRestringidos: result.length
+        });
+    } catch (error) {
+        res.status(500).json({ error: error.message });
+    }
+});
+
+router.get('/celdas/ocupacion', async (req, res) => {
+    try {
+        const { fecha } = req.query;
+        
+        let query = `
+            SELECT c.id, c.tipo, c.estado, hp."VEHICULO_id", v.placa
+            FROM "CELDA" c
+            LEFT JOIN "HISTORIAL_PARQUEO" hp ON c.id = hp."CELDA_id"
+            LEFT JOIN "VEHICULO" v ON hp."VEHICULO_id" = v.id
+        `;
+        
+        if (fecha) {
+            query += ` AND DATE(hp.fecha_hora) = '${fecha}'`;
+        }
+        
+        query += ` ORDER BY c.id`;
+        
+        const result = await sql.unsafe(query);
+        
+        const ocupadas = result.filter(c => c.estado === 'Ocupada').length;
+        const totales = result.length;
+        
+        res.status(200).json({
+            fecha: fecha || new Date().toISOString().split('T')[0],
+            totalCeldas: totales,
+            celdasOcupadas: ocupadas,
+            celdasDisponibles: totales - ocupadas,
+            porcentajeOcupacion: totales > 0 ? Math.round((ocupadas / totales) * 100) : 0,
+            detalle: result
+        });
+    } catch (error) {
+        res.status(500).json({ error: error.message });
+    }
+});
+
+router.get('/celdasmas-usadas', async (req, res) => {
+    try {
+        const { inicio, fin } = req.query;
+        
+        let query = `
+            SELECT c.id, c.tipo, COUNT(hp."VEHICULO_id") as veces_usada
+            FROM "CELDA" c
+            LEFT JOIN "HISTORIAL_PARQUEO" hp ON c.id = hp."CELDA_id"
+        `;
+        
+        if (inicio && fin) {
+            query += ` WHERE hp.fecha_hora BETWEEN '${inicio}' AND '${fin}'`;
+        }
+        
+        query += ` GROUP BY c.id, c.tipo ORDER BY veces_usada DESC LIMIT 10`;
+        
+        const result = await sql.unsafe(query);
+        res.status(200).json(result);
+    } catch (error) {
+        res.status(500).json({ error: error.message });
+    }
+});
+
+router.get('/vehiculos-mas-usados', async (req, res) => {
+    try {
+        const { inicio, fin } = req.query;
+        
+        let query = `
+            SELECT v.id, v.placa, v.marca, v.modelo, COUNT(a.id) as veces_usado
+            FROM "VEHICULO" v
+            LEFT JOIN "ACCESO_SALIDAS" a ON v.id = a."VEHICULO_id"
+        `;
+        
+        if (inicio && fin) {
+            query += ` AND a.fecha_hora BETWEEN '${inicio}' AND '${fin}'`;
+        }
+        
+        query += ` GROUP BY v.id, v.placa, v.marca, v.modelo ORDER BY veces_usado DESC LIMIT 10`;
+        
+        const result = await sql.unsafe(query);
+        res.status(200).json(result);
+    } catch (error) {
+        res.status(500).json({ error: error.message });
+    }
+});
+
+router.get('/horarios-pico', async (req, res) => {
+    try {
+        const { inicio, fin } = req.query;
+        
+        let query = `
+            SELECT 
+                EXTRACT(HOUR FROM fecha_hora) as hora,
+                EXTRACT(DOW FROM fecha_hora) as dia_semana,
+                COUNT(*) as total_registros
+            FROM "ACCESO_SALIDAS"
+        `;
+        
+        if (inicio && fin) {
+            query += ` WHERE fecha_hora BETWEEN '${inicio}' AND '${fin}'`;
+        }
+        
+        query += ` GROUP BY hora, dia_semana ORDER BY total_registros DESC`;
+        
+        const result = await sql.unsafe(query);
+        
+        const horasPico = result.slice(0, 5).map(r => ({
+            hora: `${Math.floor(r.hora)}:00`,
+            totalRegistros: parseInt(r.total_registros)
+        }));
+        
+        res.status(200).json({
+            detalle: result,
+            horariosPico: horasPico
+        });
+    } catch (error) {
+        res.status(500).json({ error: error.message });
+    }
+});
+
+module.exports = router;

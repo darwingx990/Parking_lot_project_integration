@@ -21,9 +21,12 @@
   },
   "homepage": "https://github.com/darwingx990/parking-lot-project-backend#readme",
   "dependencies": {
+    "bcryptjs": "^3.0.3",
     "cors": "^2.8.6",
     "dotenv": "^17.3.1",
     "express": "^5.2.1",
+    "joi": "^18.1.2",
+    "jsonwebtoken": "^9.0.3",
     "postgres": "^3.4.8"
   },
   "devDependencies": {

@@ -1,49 +1,62 @@
 const express = require('express');
 const router = express.Router();
 const administradorService = require('../services/administradorService');
+const { verificarToken, verificarRol } = require('../middlewares/authMiddleware');
 
-router.post('/', async (req, res) => {
+/**
+ * Solo administrador puede crear nuevos administradores
+ */
+router.post('/', verificarToken, verificarRol(['Administrador']), async (req, res, next) => {
     try {
         const nuevoAdmin = await administradorService.crearAdministrador(req.body);
         res.status(201).json({ message: 'Administrador creado exitosamente', administrador: nuevoAdmin.toJSON ? nuevoAdmin.toJSON() : nuevoAdmin });
     } catch (error) {
-        res.status(400).json({ error: error.message });
+        next(error);
     }
 });
 
-router.get('/', async (req, res) => {
+/**
+ * Solo administrador puede listar administradores
+ */
+router.get('/', verificarToken, verificarRol(['Administrador']), async (req, res, next) => {
     try {
         const admins = await administradorService.obtenerAdministradores();
         res.status(200).json(admins.map(a => a.toJSON ? a.toJSON() : a));
     } catch (error) {
-        res.status(500).json({ error: error.message });
+        next(error);
     }
 });
 
-router.get('/:id', async (req, res) => {
+router.get('/:id', verificarToken, verificarRol(['Administrador']), async (req, res, next) => {
     try {
         const admin = await administradorService.obtenerAdministradorPorId(req.params.id);
         res.status(200).json(admin.toJSON ? admin.toJSON() : admin);
     } catch (error) {
-        res.status(404).json({ error: error.message });
+        next(error);
     }
 });
 
-router.put('/:id', async (req, res) => {
+/**
+ * Solo administrador puede actualizar administradores
+ */
+router.put('/:id', verificarToken, verificarRol(['Administrador']), async (req, res, next) => {
     try {
         const resultado = await administradorService.actualizarAdministrador(req.params.id, req.body);
         res.status(200).json(resultado);
     } catch (error) {
-        res.status(400).json({ error: error.message });
+        next(error);
     }
 });
 
-router.delete('/:id', async (req, res) => {
+/**
+ * Solo administrador puede eliminar administradores
+ */
+router.delete('/:id', verificarToken, verificarRol(['Administrador']), async (req, res, next) => {
     try {
         const resultado = await administradorService.eliminarAdministrador(req.params.id);
         res.status(200).json(resultado);
     } catch (error) {
-        res.status(400).json({ error: error.message });
+        next(error);
     }
 });
 
