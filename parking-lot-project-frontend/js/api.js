@@ -7,9 +7,9 @@ const api = {
         const headers = {
             'Content-Type': 'application/json'
         };
-        const user = this.getCurrentUser();
-        if (user && user.rol) {
-            headers['rol'] = user.rol;
+        const token = this.getToken();
+        if (token) {
+            headers['Authorization'] = `Bearer ${token}`;
         }
         return headers;
     },
@@ -19,12 +19,18 @@ const api = {
         return userStr ? JSON.parse(userStr) : null;
     },
 
-    setCurrentUser(user) {
+    getToken() {
+        return localStorage.getItem('parkingToken');
+    },
+
+    setCurrentUser(user, token) {
         localStorage.setItem('parkingUser', JSON.stringify(user));
+        if (token) localStorage.setItem('parkingToken', token);
     },
 
     logout() {
         localStorage.removeItem('parkingUser');
+        localStorage.removeItem('parkingToken');
     },
 
     isAuthenticated() {
@@ -90,42 +96,19 @@ const api = {
     },
 
     async login(numeroDocumento, clave) {
-        const usuarios = await this.get('/usuarios');
-        const usuario = usuarios.find(u =>
-            u.numeroDocumento === numeroDocumento && u.clave === clave
-        );
-
-        if (!usuario) {
-            throw new Error('Documento o contraseña incorrectos');
-        }
-
-        let rol = 'usuario';
         try {
-            const admins = await this.get('/administradores');
-            if (admins.find(a => a.usuarioId === usuario.id)) {
-                rol = 'administrador';
+            // El backend ahora maneja validación, token y asignación de rol
+            const data = await this.post('/auth/login', { numeroDocumento, clave });
+            
+            if (data && data.token && data.usuario) {
+                this.setCurrentUser(data.usuario, data.token);
+                return data.usuario;
+            } else {
+                throw new Error('Respuesta inválida del servidor');
             }
-        } catch (e) {}
-
-        if (rol === 'usuario') {
-            try {
-                const ops = await this.get('/operadores');
-                if (ops.find(o => o.usuarioId === usuario.id)) {
-                    rol = 'operador';
-                }
-            } catch (e) {}
+        } catch (error) {
+            throw new Error(error.message || 'Error al iniciar sesión');
         }
-
-        const userData = {
-            id: usuario.id,
-            numeroDocumento: usuario.numeroDocumento,
-            nombre: `${usuario.primerNombre} ${usuario.primerApellido}`,
-            rol: rol,
-            perfilId: usuario.perfilId
-        };
-
-        this.setCurrentUser(userData);
-        return userData;
     },
 
     usuarios: {
@@ -147,6 +130,10 @@ const api = {
 
         async update(id, data) {
             return api.put(`/usuarios/${id}`, data);
+        },
+
+        async recoverPassword(data) {
+            return api.post('/usuarios/recuperar', data);
         },
 
         async delete(id) {

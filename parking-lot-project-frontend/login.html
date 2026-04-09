@@ -25,11 +25,6 @@
       </div>
       <a href="olvidaste_contraseña.html" class="forgot">¿Olvidaste tu contraseña?</a>
       <a href="registro-usuarios.html" class="Crear-cuenta">Crear cuenta</a>
-      <nav>
-        <ul>
-          <a href="usuario.html" class="Crear-cuenta">Ingresar como usuario</a>
-        </ul>
-      </nav>
       <button type="submit" class="btn-login">Login</button>
     </form>
   </div>
@@ -45,10 +40,13 @@
         const user = await api.login(documento, clave);
         showNotification(`Bienvenido ${user.nombre}`, 'success');
         
-        if (user.rol === 'administrador' || user.rol === 'operador') {
-          window.location.href = 'index.html';
+        // Redirigir según el rol del usuario
+        if (user.rol === 'administrador') {
+          window.location.href = 'index.html'; // Dashboard completo
+        } else if (user.rol === 'operador') {
+          window.location.href = 'index.html'; // Vista operativa
         } else {
-          window.location.href = 'index.html';
+          window.location.href = 'index.html'; // Vista disponibilidad
         }
       } catch (error) {
         showNotification(error.message, 'error');

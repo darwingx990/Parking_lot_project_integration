@@ -9,6 +9,7 @@
   <link rel="stylesheet" href="styles/styles.css" />
   <link rel="icon" type="image/png" href="assets/images/Logo_P.png" />
   <script src="js/api.js"></script>
+  <script src="js/auth-guard.js"></script>
 </head>
 
 <body id="usuarios-page">
@@ -312,17 +313,7 @@
       };
 
       try {
-        await api.usuarios.create(data);
-
-        const tipoUsuario = document.getElementById('tipoUsuario').value;
-        if (tipoUsuario === '1') {
-          const usuarios = await api.usuarios.getByDocumento(data.numeroDocumento);
-          await api.administradores.create({ usuarioId: usuarios.id });
-        } else if (tipoUsuario === '2') {
-          const usuarios = await api.usuarios.getByDocumento(data.numeroDocumento);
-          await api.operadores.create({ usuarioId: usuarios.id });
-        }
-
+        const response = await api.usuarios.create(data);
         showNotification('Usuario registrado exitosamente', 'success');
         document.getElementById('form-registro-usuario').reset();
       } catch (error) {

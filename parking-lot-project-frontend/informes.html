@@ -8,6 +8,7 @@
   <link rel="icon" type="image/png" href="assets/images/Logo_P.png" />
   <link rel="stylesheet" href="styles/styles.css" />
   <script src="js/api.js"></script>
+  <script src="js/auth-guard.js"></script>
 </head>
 
 <body id="informes-page">
@@ -172,7 +173,7 @@
       if (btn) {
         btn.classList.add("active");
       } else {
-        document.querySelector(`[data-tab="${name}"]`)?.classList.add("active');
+        document.querySelector(`[data-tab="${name}"]`)?.classList.add("active");
       }
       
       document.getElementById("tab-" + name)?.classList.add("active");

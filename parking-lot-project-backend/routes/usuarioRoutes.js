@@ -47,6 +47,16 @@ router.put('/:id', async (req, res) => {
     }
 });
 
+router.post('/recuperar', async (req, res) => {
+    try {
+        const { documento, correo, nuevaClave } = req.body;
+        const resultado = await usuarioService.recuperarClave(documento, correo, nuevaClave);
+        res.status(200).json(resultado);
+    } catch (error) {
+        res.status(400).json({ error: error.message });
+    }
+});
+
 router.delete('/:id', async (req, res) => {
     try {
         const resultado = await usuarioService.eliminarUsuario(req.params.id);

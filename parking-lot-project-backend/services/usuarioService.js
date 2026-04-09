@@ -1,5 +1,7 @@
 const sql = require('../config/db.js');
 const Usuario = require('../models/Usuario');
+const bcrypt = require('bcrypt');
+const jwt = require('jsonwebtoken');
 
 class UsuarioService {
     async crearUsuario(datos) {
@@ -10,9 +12,11 @@ class UsuarioService {
                 throw new Error('Los campos obligatorios son: tipoDocumento, numeroDocumento, primerNombre, primerApellido, direccionCorreo, numeroCelular, perfilId.');
             }
             
+            const claveHash = clave ? await bcrypt.hash(clave, 10) : null;
+
             const result = await sql`
                 INSERT INTO "USUARIO" (tipo_documento, numero_documento, primer_nombre, segundo_nombre, primer_apellido, segundo_apellido, direccion_correo, numero_celular, foto_perfil, estado, clave, "PERFIL_USUARIO_id")
-                VALUES (${tipoDocumento}, ${numeroDocumento}, ${primerNombre}, ${segundoNombre || null}, ${primerApellido}, ${segundoApellido || null}, ${direccionCorreo}, ${numeroCelular}, ${fotoPerfil || null}, ${estado || 'activo'}, ${clave || null}, ${perfilId})
+                VALUES (${tipoDocumento}, ${numeroDocumento}, ${primerNombre}, ${segundoNombre || null}, ${primerApellido}, ${segundoApellido || null}, ${direccionCorreo}, ${numeroCelular}, ${fotoPerfil || null}, ${estado || 'activo'}, ${claveHash}, ${perfilId})
                 RETURNING *
             `;
             
@@ -28,6 +32,69 @@ class UsuarioService {
                 throw new Error('No se puede conectar a la base de datos. Verifica la conexión.');
             }
             throw new Error(`Error al crear usuario: ${error.message}`);
+        }
+    }
+
+    async validarCredenciales(numeroDocumento, clavePla) {
+        try {
+            const result = await sql`
+                SELECT u.*, p.perfil 
+                FROM "USUARIO" u
+                JOIN "PERFIL_USUARIO" p ON u."PERFIL_USUARIO_id" = p.id
+                WHERE u.numero_documento = ${numeroDocumento}
+            `;
+            
+            if (result.length === 0) {
+                throw new Error('Documento o contraseña incorrectos.');
+            }
+            
+            const usuarioDB = result[0];
+            
+            if (!usuarioDB.clave) {
+                throw new Error('Cuenta sin contraseña configurada.');
+            }
+
+            let passwordMatch = false;
+            // Para mantener compatibilidad temporal con usuarios de desarrollo existentes sin hash
+            if (usuarioDB.clave.startsWith('$2b$') || usuarioDB.clave.startsWith('$2a$')) {
+                passwordMatch = await bcrypt.compare(clavePla, usuarioDB.clave);
+            } else {
+                passwordMatch = (clavePla === usuarioDB.clave);
+            }
+            
+            if (!passwordMatch) {
+                throw new Error('Documento o contraseña incorrectos.');
+            }
+            
+            let rol = usuarioDB.perfil.toLowerCase();
+
+            // Set role based on perfil ID natively
+            if (usuarioDB.PERFIL_USUARIO_id === 1) rol = 'administrador';
+            else if (usuarioDB.PERFIL_USUARIO_id === 2) rol = 'operador';
+            else rol = 'usuario';
+
+            const payload = {
+                id: usuarioDB.id_usuario,
+                numeroDocumento: usuarioDB.numero_documento,
+                rol: rol,
+                perfilId: usuarioDB.PERFIL_USUARIO_id
+            };
+
+            const token = jwt.sign(payload, process.env.JWT_SECRET, { expiresIn: '8h' });
+
+            return {
+                token,
+                usuario: {
+                    id: usuarioDB.id_usuario,
+                    numeroDocumento: usuarioDB.numero_documento,
+                    nombre: `${usuarioDB.primer_nombre} ${usuarioDB.primer_apellido}`,
+                    rol: rol,
+                    perfilId: usuarioDB.PERFIL_USUARIO_id
+                }
+            };
+        } catch (error) {
+            console.error('Error en validarCredenciales:', error);
+            throw new Error(error.message);
         }
     }
 
@@ -158,7 +225,7 @@ class UsuarioService {
             }
             if (datosActualizados.clave !== undefined) {
                 campos.push('clave');
-                valores.clave = datosActualizados.clave;
+                valores.clave = await bcrypt.hash(datosActualizados.clave, 10);
             }
             
             if (campos.length === 0) {
@@ -211,6 +278,36 @@ class UsuarioService {
                 throw new Error('No se puede conectar a la base de datos. Verifica la conexión.');
             }
             throw new Error(`Error al eliminar usuario: ${error.message}`);
+        }
+    }
+    async recuperarClave(documento, correo, nuevaClave) {
+        try {
+            // 1. Buscar usuario que coincida con ambos campos para mayor seguridad
+            const result = await sql`
+                SELECT id_usuario FROM "USUARIO" 
+                WHERE numero_documento = ${documento} AND direccion_correo = ${correo}
+            `;
+            
+            if (result.length === 0) {
+                throw new Error('Los datos proporcionados no coinciden con nuestros registros.');
+            }
+            
+            const id = result[0].id_usuario;
+            
+            // 2. Hashear la nueva clave
+            const claveHash = await bcrypt.hash(nuevaClave, 10);
+            
+            // 3. Actualizar
+            await sql`
+                UPDATE "USUARIO" 
+                SET clave = ${claveHash} 
+                WHERE id_usuario = ${id}
+            `;
+            
+            return { message: "Contraseña actualizada exitosamente." };
+        } catch (error) {
+            console.error('Error en recuperarClave:', error);
+            throw new Error(error.message);
         }
     }
 }
