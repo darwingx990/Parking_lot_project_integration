@@ -1,0 +1,68 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Dashboard - BioParking</title>
+    <link rel="stylesheet" href="css/components.css">
+    <link rel="icon" href="assets/images/logo.jpg">
+</head>
+<body>
+    <div class="dashboard-wrapper">
+        <!-- Sidebar -->
+        <aside class="sidebar" id="sidebar">
+            <div class="sidebar-header">
+                <img src="assets/images/logo.jpg" alt="Logo" class="sidebar-logo">
+                <span class="brand-name">BioParking</span>
+            </div>
+            <nav class="sidebar-nav">
+                <ul>
+                    <li class="nav-item active" data-module="dashboard">
+                        <i class="icon-dashboard">📊</i> Dashboard
+                    </li>
+                    <li class="nav-item" data-module="celdas">
+                        <i class="icon-celdas">🅿️</i> Celdas
+                    </li>
+                    <li class="nav-item" data-module="usuarios">
+                        <i class="icon-usuarios">👥</i> Usuarios
+                    </li>
+                    <li class="nav-item" data-module="vehiculos">
+                        <i class="icon-vehiculos">🚗</i> Vehículos
+                    </li>
+                    <li class="nav-item" data-module="incidencias">
+                        <i class="icon-incidencias">⚠️</i> Incidencias
+                    </li>
+                    <li class="nav-item" data-module="reportes">
+                        <i class="icon-reportes">📈</i> Reportes
+                    </li>
+                </ul>
+            </nav>
+            <div class="sidebar-footer">
+                <button id="logoutBtn" class="btn-logout">Cerrar Sesión</button>
+            </div>
+        </aside>
+
+        <!-- Main Content Area -->
+        <div class="main-area">
+            <!-- Navbar -->
+            <header class="navbar">
+                <div class="nav-left">
+                    <button id="toggleSidebar" class="btn-icon">☰</button>
+                    <h2 id="currentModuleName">Dashboard</h2>
+                </div>
+                <div class="nav-right">
+                    <span id="userName" class="user-name">Cargando...</span>
+                    <span id="userRole" class="user-role badge">Operador</span>
+                </div>
+            </header>
+
+            <!-- Dynamic Content -->
+            <main id="mainContent" class="content-container">
+                <!-- Módulos se cargan aquí -->
+            </main>
+        </div>
+    </div>
+
+    <script type="module" src="js/views/DashboardMain.js"></script>
+</body>
+</html>

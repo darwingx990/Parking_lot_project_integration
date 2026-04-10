@@ -1,180 +1,82 @@
-const sql = require('../config/db.js');
+const pool = require('../config/db.js');
 const AccesoSalidas = require('../models/AccesoSalidas');
 
 class AccesoSalidasService {
     async crearAccesoSalidas(datos) {
-        try {
-            const { movimiento, fechaHora, puerta, tiempoEstadia, vehiculoId } = datos;
-            
-            if (!movimiento || !vehiculoId) {
-                throw new Error('Los campos movimiento y vehiculoId son obligatorios.');
-            }
-            
-            const result = await sql`
-                INSERT INTO "ACCESO_SALIDAS" (movimiento, fecha_hora, puerta, tiempo_estadia, "VEHICULO_id")
-                VALUES (${movimiento}, ${fechaHora || new Date()}, ${puerta || null}, ${tiempoEstadia || 0}, ${vehiculoId})
-                RETURNING *
-            `;
-            
-            if (!result || result.length === 0) {
-                throw new Error('No se pudo crear el registro de acceso/salida.');
-            }
-            
-            const row = result[0];
-            return new AccesoSalidas(row.id, row.movimiento, row.fecha_hora, row.puerta, row.tiempo_estadia, row.VEHICULO_id);
-        } catch (error) {
-            console.error('Error en crearAccesoSalidas:', error);
-            if (error.code === 'ECONNREFUSED' || error.code === 'ETIMEDOUT') {
-                throw new Error('No se puede conectar a la base de datos. Verifica la conexión.');
-            }
-            throw new Error(`Error al crear acceso/salida: ${error.message}`);
-        }
+        const { movimiento, fechaHora, puerta, tiempoEstadia, vehiculoId } = datos;
+        if (!movimiento || !fechaHora || !vehiculoId) throw new Error('Campos obligatorios: movimiento, fechaHora, vehiculoId.');
+        const [result] = await pool.query(
+            'INSERT INTO ACCESO_SALIDAS (movimiento, fecha_hora, puerta, tiempo_estadia, VEHICULO_id) VALUES (?, ?, ?, ?, ?)',
+            [movimiento, fechaHora, puerta || null, tiempoEstadia || null, vehiculoId]
+        );
+        const [rows] = await pool.query('SELECT * FROM ACCESO_SALIDAS WHERE id = ?', [result.insertId]);
+        const r = rows[0];
+        return new AccesoSalidas(r.id, r.movimiento, r.fecha_hora, r.puerta, r.tiempo_estadia, r.VEHICULO_id);
     }
 
     async obtenerAccesoSalidas() {
-        try {
-            const result = await sql`
-                SELECT a.*, v.placa as vehiculo_placa
-                FROM "ACCESO_SALIDAS" a
-                JOIN "VEHICULO" v ON a."VEHICULO_id" = v.id
-                ORDER BY a.fecha_hora DESC
-            `;
-            
-            return result.map(row => ({
-                id: row.id,
-                movimiento: row.movimiento,
-                fechaHora: row.fecha_hora,
-                puerta: row.puerta,
-                tiempoEstadia: row.tiempo_estadia,
-                vehiculoId: row.VEHICULO_id,
-                vehiculoPlaca: row.vehiculo_placa
-            }));
-        } catch (error) {
-            console.error('Error en obtenerAccesoSalidas:', error);
-            if (error.code === 'ECONNREFUSED' || error.code === 'ETIMEDOUT') {
-                throw new Error('No se puede conectar a la base de datos. Verifica la conexión.');
-            }
-            throw new Error(`Error al obtener accesos/salidas: ${error.message}`);
-        }
+        const [result] = await pool.query(
+            `SELECT a.*, v.placa as vehiculo_placa, v.tipo as vehiculo_tipo
+             FROM ACCESO_SALIDAS a
+             LEFT JOIN VEHICULO v ON a.VEHICULO_id = v.id
+             ORDER BY a.id DESC`
+        );
+        return result.map(r => ({
+            id: r.id, movimiento: r.movimiento, fechaHora: r.fecha_hora,
+            puerta: r.puerta, tiempoEstadia: r.tiempo_estadia,
+            vehiculoId: r.VEHICULO_id, vehiculoPlaca: r.vehiculo_placa || '',
+            vehiculoTipo: r.vehiculo_tipo || ''
+        }));
     }
 
     async obtenerAccesoSalidasPorId(id) {
-        try {
-            const result = await sql`
-                SELECT a.*, v.placa as vehiculo_placa
-                FROM "ACCESO_SALIDAS" a
-                JOIN "VEHICULO" v ON a."VEHICULO_id" = v.id
-                WHERE a.id = ${id}
-            `;
-            
-            if (result.length === 0) {
-                throw new Error('Acceso/Salida no encontrado.');
-            }
-            
-            const row = result[0];
-            return new AccesoSalidas(row.id, row.movimiento, row.fecha_hora, row.puerta, row.tiempo_estadia, row.VEHICULO_id);
-        } catch (error) {
-            console.error('Error en obtenerAccesoSalidasPorId:', error);
-            if (error.code === 'ECONNREFUSED' || error.code === 'ETIMEDOUT') {
-                throw new Error('No se puede conectar a la base de datos. Verifica la conexión.');
-            }
-            throw new Error(`Error al obtener acceso/salida por ID: ${error.message}`);
-        }
+        const [result] = await pool.query(
+            `SELECT a.*, v.placa as vehiculo_placa FROM ACCESO_SALIDAS a
+             LEFT JOIN VEHICULO v ON a.VEHICULO_id = v.id WHERE a.id = ?`, [id]
+        );
+        if (result.length === 0) throw new Error('Acceso no encontrado.');
+        const r = result[0];
+        return new AccesoSalidas(r.id, r.movimiento, r.fecha_hora, r.puerta, r.tiempo_estadia, r.VEHICULO_id);
     }
 
     async obtenerAccesoSalidasPorVehiculo(vehiculoId) {
-        try {
-            const result = await sql`
-                SELECT * FROM "ACCESO_SALIDAS" 
-                WHERE "VEHICULO_id" = ${vehiculoId}
-                ORDER BY fecha_hora DESC
-            `;
-            
-            return result.map(row => 
-                new AccesoSalidas(row.id, row.movimiento, row.fecha_hora, row.puerta, row.tiempo_estadia, row.VEHICULO_id)
-            );
-        } catch (error) {
-            console.error('Error en obtenerAccesoSalidasPorVehiculo:', error);
-            if (error.code === 'ECONNREFUSED' || error.code === 'ETIMEDOUT') {
-                throw new Error('No se puede conectar a la base de datos. Verifica la conexión.');
-            }
-            throw new Error(`Error al obtener accesos/salidas por vehículo: ${error.message}`);
-        }
+        const [result] = await pool.query(
+            `SELECT a.*, v.placa as vehiculo_placa FROM ACCESO_SALIDAS a
+             LEFT JOIN VEHICULO v ON a.VEHICULO_id = v.id WHERE a.VEHICULO_id = ?
+             ORDER BY a.fecha_hora DESC`, [vehiculoId]
+        );
+        return result.map(r => new AccesoSalidas(r.id, r.movimiento, r.fecha_hora, r.puerta, r.tiempo_estadia, r.VEHICULO_id));
     }
 
     async obtenerAccesoSalidasPorFecha(fechaInicio, fechaFin) {
-        try {
-            const result = await sql`
-                SELECT a.*, v.placa as vehiculo_placa
-                FROM "ACCESO_SALIDAS" a
-                JOIN "VEHICULO" v ON a."VEHICULO_id" = v.id
-                WHERE a.fecha_hora BETWEEN ${fechaInicio} AND ${fechaFin}
-                ORDER BY a.fecha_hora DESC
-            `;
-            
-            return result.map(row => ({
-                id: row.id,
-                movimiento: row.movimiento,
-                fechaHora: row.fecha_hora,
-                puerta: row.puerta,
-                tiempoEstadia: row.tiempo_estadia,
-                vehiculoId: row.VEHICULO_id,
-                vehiculoPlaca: row.vehiculo_placa
-            }));
-        } catch (error) {
-            console.error('Error en obtenerAccesoSalidasPorFecha:', error);
-            if (error.code === 'ECONNREFUSED' || error.code === 'ETIMEDOUT') {
-                throw new Error('No se puede conectar a la base de datos. Verifica la conexión.');
-            }
-            throw new Error(`Error al obtener accesos/salidas por fecha: ${error.message}`);
-        }
+        const [result] = await pool.query(
+            `SELECT a.*, v.placa as vehiculo_placa FROM ACCESO_SALIDAS a
+             LEFT JOIN VEHICULO v ON a.VEHICULO_id = v.id
+             WHERE a.fecha_hora BETWEEN ? AND ?
+             ORDER BY a.fecha_hora DESC`, [fechaInicio, fechaFin]
+        );
+        return result.map(r => ({
+            id: r.id, movimiento: r.movimiento, fechaHora: r.fecha_hora,
+            puerta: r.puerta, tiempoEstadia: r.tiempo_estadia,
+            vehiculoId: r.VEHICULO_id, vehiculoPlaca: r.vehiculo_placa || ''
+        }));
     }
 
-    async actualizarAccesoSalidas(id, datosActualizados) {
-        try {
-            const { movimiento, fechaHora, puerta, tiempoEstadia, vehiculoId } = datosActualizados;
-            
-            const result = await sql`
-                UPDATE "ACCESO_SALIDAS"
-                SET movimiento = ${movimiento || sql.unsafe('movimiento')},
-                    fecha_hora = ${fechaHora !== undefined ? fechaHora : sql.unsafe('fecha_hora')},
-                    puerta = ${puerta !== undefined ? puerta : sql.unsafe('puerta')},
-                    tiempo_estadia = ${tiempoEstadia !== undefined ? tiempoEstadia : sql.unsafe('tiempo_estadia')},
-                    "VEHICULO_id" = ${vehiculoId || sql.unsafe('"VEHICULO_id"')}
-                WHERE id = ${id}
-                RETURNING id
-            `;
-            
-            if (!result || result.length === 0) {
-                throw new Error('Acceso/Salida no encontrado para actualizar.');
-            }
-            
-            return { message: "Acceso/Salida actualizado correctamente.", datos: datosActualizados };
-        } catch (error) {
-            console.error('Error en actualizarAccesoSalidas:', error);
-            if (error.code === 'ECONNREFUSED' || error.code === 'ETIMEDOUT') {
-                throw new Error('No se puede conectar a la base de datos. Verifica la conexión.');
-            }
-            throw new Error(`Error al actualizar acceso/salida: ${error.message}`);
-        }
+    async actualizarAccesoSalidas(id, datos) {
+        const sets = []; const values = [];
+        const mapping = { movimiento:'movimiento', fechaHora:'fecha_hora', puerta:'puerta', tiempoEstadia:'tiempo_estadia' };
+        for (const [key, col] of Object.entries(mapping)) { if (datos[key] !== undefined) { sets.push(`${col} = ?`); values.push(datos[key]); } }
+        if (sets.length === 0) throw new Error('No hay campos para actualizar.');
+        values.push(id);
+        const [result] = await pool.query(`UPDATE ACCESO_SALIDAS SET ${sets.join(', ')} WHERE id = ?`, values);
+        if (result.affectedRows === 0) throw new Error('Acceso no encontrado.');
+        return { message: 'Acceso actualizado correctamente.' };
     }
 
     async eliminarAccesoSalidas(id) {
-        try {
-            const result = await sql`DELETE FROM "ACCESO_SALIDAS" WHERE id = ${id} RETURNING id`;
-            
-            if (!result || result.length === 0) {
-                throw new Error('Acceso/Salida no encontrado para eliminar.');
-            }
-            
-            return { message: "Acceso/Salida eliminado con éxito." };
-        } catch (error) {
-            console.error('Error en eliminarAccesoSalidas:', error);
-            if (error.code === 'ECONNREFUSED' || error.code === 'ETIMEDOUT') {
-                throw new Error('No se puede conectar a la base de datos. Verifica la conexión.');
-            }
-            throw new Error(`Error al eliminar acceso/salida: ${error.message}`);
-        }
+        const [result] = await pool.query('DELETE FROM ACCESO_SALIDAS WHERE id = ?', [id]);
+        if (result.affectedRows === 0) throw new Error('Acceso no encontrado.');
+        return { message: 'Acceso eliminado con éxito.' };
     }
 }
 

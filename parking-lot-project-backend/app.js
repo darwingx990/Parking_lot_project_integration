@@ -1,10 +1,11 @@
 const express = require('express');
 const cors = require('cors');
 require('dotenv').config();
+const initDatabase = require('./config/initDb');
 
 const usuarioRoutes = require('./routes/usuarioRoutes');
 const authRoutes = require('./routes/authRoutes');
-const perfilRoutes = require('./routes/perfilRoutes');
+const authMiddleware = require('./middlewares/authMiddleware');
 const administradorRoutes = require('./routes/administradorRoutes');
 const operadorRoutes = require('./routes/operadorRoutes');
 const reporteIncidenciaRoutes = require('./routes/reporteIncidenciaRoutes');
@@ -14,9 +15,6 @@ const getEstadoRoutes = require('./routes/getEstadoRoutes');
 const vehiculoRoutes = require('./routes/vehiculoRoutes');
 const accesoSalidasRoutes = require('./routes/accesoSalidasRoutes');
 const picoPlacaRoutes = require('./routes/picoPlacaRoutes');
-const reporteRoutes = require('./routes/reporteRoutes');
-
-const errorHandler = require('./middlewares/errorHandler');
 
 const app = express();
 const PORT = process.env.PORT || 3000;
@@ -26,29 +24,38 @@ app.use(cors());
 app.use(express.json()); // Permite a la app procesar cuerpos JSON en las peticiones HTTP
 
 // Rutas de la API
-app.use('/api/usuarios', usuarioRoutes);
+// Rutas de autenticación pública
 app.use('/api/auth', authRoutes);
-app.use('/api/perfil', perfilRoutes);
-app.use('/api/administradores', administradorRoutes);
-app.use('/api/operadores', operadorRoutes);
-app.use('/api/reportes-incidencia', reporteIncidenciaRoutes);
-app.use('/api/incidencia', incidenciaRoutes);
-app.use('/api/historial-parqueo', historialParqueoRoutes);
-app.use('/api/get-estado', getEstadoRoutes);   
-app.use('/api/vehiculo', vehiculoRoutes);
-app.use('/api/acceso-salida', accesoSalidasRoutes);
-app.use('/api/pico-placa', picoPlacaRoutes);
-app.use('/api/reportes', reporteRoutes);
 
-// Ruta de prueba inicial
-app.get('/', (req, res) => {
-    res.send('Servidor de Parking Lot funcionando correctamente.');
-});
+// Rutas de la API Protegidas
+app.use('/api/usuarios', (req, res, next) => {
+    // Permitir Registro (POST /) y Recuperación (POST /recuperar) sin Token
+    if (req.method === 'POST' && (req.path === '/' || req.path === '/recuperar')) {
+        return next();
+    }
+    return authMiddleware(req, res, next);
+}, usuarioRoutes);
 
-// Middleware de error centralizado
-app.use(errorHandler);
+app.use('/api/administradores', authMiddleware, administradorRoutes);
+app.use('/api/operadores', authMiddleware, operadorRoutes);
+app.use('/api/reportes-incidencia', authMiddleware, reporteIncidenciaRoutes);
+app.use('/api/incidencia', authMiddleware, incidenciaRoutes);
+app.use('/api/historial-parqueo', authMiddleware, historialParqueoRoutes);
+app.use('/api/get-estado', authMiddleware, getEstadoRoutes);   
+app.use('/api/vehiculo', authMiddleware, vehiculoRoutes);
+app.use('/api/acceso-salida', authMiddleware, accesoSalidasRoutes);
+app.use('/api/pico-placa', authMiddleware, picoPlacaRoutes);
+// Servir aplicación Frontend
+const path = require('path');
+app.use(express.static(path.join(__dirname, '../parking-lot-project-frontend')));
 
 // Levantar el servidor
-app.listen(PORT, () => {
-    console.log(`Servidor corriendo en el puerto ${PORT}`);
+initDatabase().then(() => {
+    app.listen(PORT, () => {
+        console.log(`Servidor corriendo en el puerto ${PORT}`);
+    });
+}).catch(() => {
+    app.listen(PORT, () => {
+        console.log(`Servidor corriendo en el puerto ${PORT} (sin conexión a BD)`);
+    });
 });

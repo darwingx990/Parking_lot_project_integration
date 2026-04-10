@@ -1,14 +1,17 @@
 const express = require('express');
 const router = express.Router();
-const authService = require('../services/authService');
-const { validar, loginSchema } = require('../middlewares/validationMiddleware');
+const usuarioService = require('../services/usuarioService');
 
-router.post('/login', validar(loginSchema), async (req, res) => {
+router.post('/login', async (req, res) => {
     try {
-        const { numeroDocumento, clave, tipoLogin } = req.body;
+        const { numeroDocumento, clave } = req.body;
         
-        const resultado = await authService.autenticarUsuario(numeroDocumento, clave, tipoLogin);
-        res.status(200).json(resultado);
+        if (!numeroDocumento) {
+            return res.status(400).json({ error: 'Número de documento es obligatorio.' });
+        }
+
+        const usuarioAutenticado = await usuarioService.validarCredenciales(numeroDocumento, clave || null);
+        res.status(200).json(usuarioAutenticado);
     } catch (error) {
         res.status(401).json({ error: error.message });
     }

@@ -1,104 +1,39 @@
-<!doctype html>
+<!DOCTYPE html>
 <html lang="es">
-
 <head>
-    <meta charset="UTF-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>BioParking - Disponibilidad</title>
-    <link rel="icon" type="image/jpg" href="assets/images/Logo P.png" />
-    <link rel="stylesheet" href="styles/styles.css" />
-    <link rel="icon" type="image/png" href="assets/images/Logo_P.png" />
-    <script src="js/utils.js"></script>
-    <script src="js/api.js"></script>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Login - BioParking</title>
+    <link rel="stylesheet" href="css/index.css">
+    <link rel="icon" href="assets/images/logo.jpg">
 </head>
-
-<body id="espacios-page">
-    <main class="main">
-        <h1>Visualización de Celdas de Parqueo</h1>
-        <p class="subtitle">Estado general por áreas y niveles</p>
-        
-        <div id="loading-indicator" style="text-align: center; padding: 40px;">
-            <p>Cargando estado de celdas...</p>
+<body>
+    <div class="login-container">
+        <div class="login-box">
+            <div class="login-header">
+                <img src="assets/images/bioparking_transparente.png" alt="BioParking Logo" class="logo">
+                <h1>Bienvenido</h1>
+                <p>Ingresa tus credenciales para continuar</p>
+            </div>
+            <div class="login-tabs">
+                <button type="button" class="tab-btn active" data-role="personal">Personal</button>
+                <button type="button" class="tab-btn" data-role="usuario">Soy Usuario</button>
+            </div>
+            <form id="loginForm">
+                <input type="hidden" id="loginRole" value="personal">
+                <div class="input-group">
+                    <label for="numeroDocumento" id="idLabel">Número de Documento</label>
+                    <input type="text" id="numeroDocumento" name="numeroDocumento" required placeholder="Ej: 100100100">
+                </div>
+                <div class="input-group" id="passwordGroup">
+                    <label for="clave">Contraseña</label>
+                    <input type="password" id="clave" name="clave" required placeholder="Ej: admin123">
+                </div>
+                <button type="submit" class="btn-login">Iniciar Sesión</button>
+                <div id="loginMessage" class="message"></div>
+            </form>
         </div>
-
-        <section class="parking-container" id="parking-container" style="display: none;">
-        </section>
-
-        <div style="text-align: center; margin-top: 30px;">
-            <button onclick="loadParkingStatus()" style="background: var(--morado); color: white; border: none; padding: 12px 24px; border-radius: 8px; cursor: pointer; font-size: 14px;">
-                🔄 Actualizar
-            </button>
-        </div>
-    </main>
-
-    <script src="js/load-header.js"></script>
-    
-    <script>
-        async function loadParkingStatus() {
-            const container = document.getElementById('parking-container');
-            const loading = document.getElementById('loading-indicator');
-            
-            loading.style.display = 'block';
-            container.style.display = 'none';
-
-            try {
-                const celdas = await api.getEstado.getAll();
-                const areas = {
-                    'A': { nombre: 'Área A - Nivel 1', celdas: [] },
-                    'B': { nombre: 'Área B - Nivel 1', celdas: [] },
-                    'C': { nombre: 'Área C - Nivel 2', celdas: [] },
-                    'D': { nombre: 'Área D - Nivel 2', celdas: [] }
-                };
-
-                celdas.forEach((celda, index) => {
-                    const letras = ['A', 'B', 'C', 'D'];
-                    const letra = letras[index % 4];
-                    const numero = String(index + 1).padStart(2, '0');
-                    
-                    if (areas[letra]) {
-                        areas[letra].celdas.push({
-                            id: celda.id,
-                            numero: `${letra}-${numero}`,
-                            tipo: celda.tipo.toLowerCase(),
-                            estado: celda.estado === 'Libre' ? 'disponible' : 'ocupada'
-                        });
-                    }
-                });
-
-                container.innerHTML = '';
-
-                Object.keys(areas).forEach(key => {
-                    const area = areas[key];
-                    const areaDiv = document.createElement('div');
-                    areaDiv.className = 'area';
-                    
-                    let cellsHtml = '';
-                    area.celdas.forEach(celda => {
-                        cellsHtml += `<div class="cell ${celda.estado} ${celda.tipo}" title="Celda ${celda.numero} - ${celda.estado === 'disponible' ? 'Libre' : 'Ocupada'}">${celda.numero}</div>`;
-                    });
-
-                    areaDiv.innerHTML = `
-                        <h2>${area.nombre}</h2>
-                        <div class="cells">${cellsHtml}</div>
-                    `;
-                    container.appendChild(areaDiv);
-                });
-
-                loading.style.display = 'none';
-                container.style.display = 'grid';
-
-            } catch (error) {
-                console.error('Error cargando celdas:', error);
-                loading.innerHTML = '<p style="color: var(--error);">Error al cargar las celdas. Verifique la conexión con el servidor.</p>';
-                loading.style.display = 'block';
-            }
-        }
-
-        document.addEventListener('DOMContentLoaded', () => {
-            loadParkingStatus();
-            setInterval(loadParkingStatus, 30000);
-        });
-    </script>
+    </div>
+    <script type="module" src="js/views/Login.js"></script>
 </body>
-
 </html>

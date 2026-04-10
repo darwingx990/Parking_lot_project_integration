@@ -1,116 +1,47 @@
-const sql = require('../config/db.js');
+const pool = require('../config/db.js');
 const PicoPlaca = require('../models/PicoPlaca');
 
 class PicoPlacaService {
     async crearPicoPlaca(datos) {
-        try {
-            const { tipoVehiculo, numero, dia } = datos;
-            
-            if (!tipoVehiculo || !numero || !dia) {
-                throw new Error('Los campos tipoVehiculo, numero y dia son obligatorios.');
-            }
-            
-            const result = await sql`
-                INSERT INTO "PICO_PLACA" (tipo_vehiculo, numero, dia)
-                VALUES (${tipoVehiculo}, ${numero}, ${dia})
-                RETURNING *
-            `;
-            
-            if (!result || result.length === 0) {
-                throw new Error('No se pudo crear el registro.');
-            }
-            
-            const row = result[0];
-            return new PicoPlaca(row.id, row.tipo_vehiculo, row.numero, row.dia);
-        } catch (error) {
-            console.error('Error en crearPicoPlaca:', error);
-            if (error.code === 'ECONNREFUSED' || error.code === 'ETIMEDOUT') {
-                throw new Error('No se puede conectar a la base de datos. Verifica la conexión.');
-            }
-            throw new Error(`Error al crear pico y placa: ${error.message}`);
-        }
+        const { tipoVehiculo, numero, dia } = datos;
+        if (!numero || !dia) throw new Error('Campos obligatorios: numero, dia.');
+        const [result] = await pool.query(
+            'INSERT INTO PICO_PLACA (tipo_vehiculo, numero, dia) VALUES (?, ?, ?)',
+            [tipoVehiculo || null, numero, dia]
+        );
+        const [rows] = await pool.query('SELECT * FROM PICO_PLACA WHERE id = ?', [result.insertId]);
+        const r = rows[0];
+        return new PicoPlaca(r.id, r.tipo_vehiculo, r.numero, r.dia);
     }
 
     async obtenerPicoPlacas() {
-        try {
-            const result = await sql`SELECT * FROM "PICO_PLACA" ORDER BY id`;
-            
-            return result.map(row => 
-                new PicoPlaca(row.id, row.tipo_vehiculo, row.numero, row.dia)
-            );
-        } catch (error) {
-            console.error('Error en obtenerPicoPlacas:', error);
-            if (error.code === 'ECONNREFUSED' || error.code === 'ETIMEDOUT') {
-                throw new Error('No se puede conectar a la base de datos. Verifica la conexión.');
-            }
-            throw new Error(`Error al obtener pico y placa: ${error.message}`);
-        }
+        const [result] = await pool.query('SELECT * FROM PICO_PLACA ORDER BY dia, numero');
+        return result.map(r => new PicoPlaca(r.id, r.tipo_vehiculo, r.numero, r.dia));
     }
 
     async obtenerPicoPlacaPorId(id) {
-        try {
-            const result = await sql`SELECT * FROM "PICO_PLACA" WHERE id = ${id}`;
-            
-            if (result.length === 0) {
-                throw new Error('Registro no encontrado.');
-            }
-            
-            const row = result[0];
-            return new PicoPlaca(row.id, row.tipo_vehiculo, row.numero, row.dia);
-        } catch (error) {
-            console.error('Error en obtenerPicoPlacaPorId:', error);
-            if (error.code === 'ECONNREFUSED' || error.code === 'ETIMEDOUT') {
-                throw new Error('No se puede conectar a la base de datos. Verifica la conexión.');
-            }
-            throw new Error(`Error al obtener pico y placa por ID: ${error.message}`);
-        }
+        const [result] = await pool.query('SELECT * FROM PICO_PLACA WHERE id = ?', [id]);
+        if (result.length === 0) throw new Error('Pico y Placa no encontrado.');
+        const r = result[0];
+        return new PicoPlaca(r.id, r.tipo_vehiculo, r.numero, r.dia);
     }
 
-    async actualizarPicoPlaca(id, datosActualizados) {
-        try {
-            const { tipoVehiculo, numero, dia } = datosActualizados;
-            
-            if (!tipoVehiculo || !numero || !dia) {
-                throw new Error('Los campos tipoVehiculo, numero y dia son obligatorios.');
-            }
-            
-            const result = await sql`
-                UPDATE "PICO_PLACA"
-                SET tipo_vehiculo = ${tipoVehiculo}, numero = ${numero}, dia = ${dia}
-                WHERE id = ${id}
-                RETURNING id
-            `;
-            
-            if (!result || result.length === 0) {
-                throw new Error('Registro no encontrado para actualizar.');
-            }
-            
-            return { message: "Pico y Placa actualizado correctamente. ", datos: datosActualizados };
-        } catch (error) {
-            console.error('Error en actualizarPicoPlaca:', error);
-            if (error.code === 'ECONNREFUSED' || error.code === 'ETIMEDOUT') {
-                throw new Error('No se puede conectar a la base de datos. Verifica la conexión.');
-            }
-            throw new Error(`Error al actualizar pico y placa: ${error.message}`);
-        }
+    async actualizarPicoPlaca(id, datos) {
+        const sets = []; const values = [];
+        if (datos.tipoVehiculo !== undefined) { sets.push('tipo_vehiculo = ?'); values.push(datos.tipoVehiculo); }
+        if (datos.numero !== undefined) { sets.push('numero = ?'); values.push(datos.numero); }
+        if (datos.dia !== undefined) { sets.push('dia = ?'); values.push(datos.dia); }
+        if (sets.length === 0) throw new Error('No hay campos para actualizar.');
+        values.push(id);
+        const [result] = await pool.query(`UPDATE PICO_PLACA SET ${sets.join(', ')} WHERE id = ?`, values);
+        if (result.affectedRows === 0) throw new Error('Pico y Placa no encontrado.');
+        return { message: 'Pico y Placa actualizado correctamente.' };
     }
 
     async eliminarPicoPlaca(id) {
-        try {
-            const result = await sql`DELETE FROM "PICO_PLACA" WHERE id = ${id} RETURNING id`;
-            
-            if (!result || result.length === 0) {
-                throw new Error('Registro no encontrado para eliminar.');
-            }
-            
-            return { message: "Pico y Placa eliminado con exito." };
-        } catch (error) {
-            console.error('Error en eliminarPicoPlaca:', error);
-            if (error.code === 'ECONNREFUSED' || error.code === 'ETIMEDOUT') {
-                throw new Error('No se puede conectar a la base de datos. Verifica la conexión.');
-            }
-            throw new Error(`Error al eliminar pico y placa: ${error.message}`);
-        }
+        const [result] = await pool.query('DELETE FROM PICO_PLACA WHERE id = ?', [id]);
+        if (result.affectedRows === 0) throw new Error('Pico y Placa no encontrado.');
+        return { message: 'Pico y Placa eliminado con éxito.' };
     }
 }
 

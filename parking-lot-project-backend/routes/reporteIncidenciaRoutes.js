@@ -1,30 +1,26 @@
 const express = require('express');
 const router = express.Router();
 const reporteIncidenciaService = require('../services/reporteIncidenciaService');
-const { verificarToken, verificarRol } = require('../middlewares/authMiddleware');
 
-/**
- * Solo administrador puede listar reportes de incidencias
- */
-router.get('/', verificarToken, verificarRol(['Administrador']), async (req, res, next) => {
+router.get('/', async (req, res) => {
     try {
         const reportes = await reporteIncidenciaService.obtenerReportesIncidencia();
         res.status(200).json(reportes);
     } catch (error) {
-        next(error);
+        res.status(500).json({ error: error.message });
     }
 });
 
-router.get('/vehiculo/:vehiculoId', verificarToken, async (req, res, next) => {
+router.get('/vehiculo/:vehiculoId', async (req, res) => {
     try {
         const reportes = await reporteIncidenciaService.obtenerReportesPorVehiculo(req.params.vehiculoId);
         res.status(200).json(reportes);
     } catch (error) {
-        next(error);
+        res.status(500).json({ error: error.message });
     }
 });
 
-router.get('/:vehiculoId/:incidenciaId', verificarToken, async (req, res, next) => {
+router.get('/:vehiculoId/:incidenciaId', async (req, res) => {
     try {
         const reporte = await reporteIncidenciaService.obtenerReportePorId(
             req.params.vehiculoId,
@@ -32,26 +28,20 @@ router.get('/:vehiculoId/:incidenciaId', verificarToken, async (req, res, next) 
         );
         res.status(200).json(reporte);
     } catch (error) {
-        next(error);
+        res.status(404).json({ error: error.message });
     }
 });
 
-/**
- * Admin/Operador pueden crear reportes de incidencias
- */
-router.post('/', verificarToken, verificarRol(['Administrador', 'Operador']), async (req, res, next) => {
+router.post('/', async (req, res) => {
     try {
         const nuevoReporte = await reporteIncidenciaService.crearReporteIncidencia(req.body);
         res.status(201).json({ message: 'Reporte de incidencia creado exitosamente', reporte: nuevoReporte });
     } catch (error) {
-        next(error);
+        res.status(400).json({ error: error.message });
     }
 });
 
-/**
- * Solo administrador puede actualizar reportes
- */
-router.put('/:vehiculoId/:incidenciaId', verificarToken, verificarRol(['Administrador']), async (req, res, next) => {
+router.put('/:vehiculoId/:incidenciaId', async (req, res) => {
     try {
         const resultado = await reporteIncidenciaService.actualizarReporteIncidencia(
             req.params.vehiculoId,
@@ -64,7 +54,7 @@ router.put('/:vehiculoId/:incidenciaId', verificarToken, verificarRol(['Administ
     }
 });
 
-router.delete('/:vehiculoId/:incidenciaId', verificarToken, verificarRol(['Administrador']), async (req, res, next) => {
+router.delete('/:vehiculoId/:incidenciaId', async (req, res) => {
     try {
         const resultado = await reporteIncidenciaService.eliminarReporteIncidencia(
             req.params.vehiculoId,
@@ -72,7 +62,7 @@ router.delete('/:vehiculoId/:incidenciaId', verificarToken, verificarRol(['Admin
         );
         res.status(200).json(resultado);
     } catch (error) {
-        next(error);
+        res.status(400).json({ error: error.message });
     }
 });
 

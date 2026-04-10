@@ -1,135 +1,45 @@
-const sql = require('../config/db.js');
+const pool = require('../config/db.js');
 
 class IncidenciaService {
     async crearIncidencia(datos) {
-        try {
-            const { nombre } = datos;
-            
-            if (!nombre) {
-                throw new Error('El campo nombre es obligatorio.');
-            }
-            
-            const result = await sql`
-                INSERT INTO "INCIDENCIA" (nombre)
-                VALUES (${nombre})
-                RETURNING *
-            `;
-            
-            if (!result || result.length === 0) {
-                throw new Error('No se pudo crear la incidencia.');
-            }
-            
-            const row = result[0];
-            return { id: row.id, nombre: row.nombre };
-        } catch (error) {
-            console.error('Error en crearIncidencia:', error);
-            if (error.code === 'ECONNREFUSED' || error.code === 'ETIMEDOUT') {
-                throw new Error('No se puede conectar a la base de datos. Verifica la conexión.');
-            }
-            throw new Error(`Error al crear incidencia: ${error.message}`);
-        }
+        const { nombre } = datos;
+        if (!nombre) throw new Error('El nombre de la incidencia es obligatorio.');
+        const [result] = await pool.query('INSERT INTO INCIDENCIA (nombre) VALUES (?)', [nombre]);
+        const [rows] = await pool.query('SELECT * FROM INCIDENCIA WHERE id = ?', [result.insertId]);
+        return rows[0];
     }
 
     async obtenerIncidencias() {
-        try {
-            const result = await sql`SELECT * FROM "INCIDENCIA" ORDER BY id`;
-            
-            return result.map(row => ({
-                id: row.id,
-                nombre: row.nombre
-            }));
-        } catch (error) {
-            console.error('Error en obtenerIncidencias:', error);
-            if (error.code === 'ECONNREFUSED' || error.code === 'ETIMEDOUT') {
-                throw new Error('No se puede conectar a la base de datos. Verifica la conexión.');
-            }
-            throw new Error(`Error al obtener incidencias: ${error.message}`);
-        }
+        const [result] = await pool.query('SELECT * FROM INCIDENCIA ORDER BY id');
+        return result;
     }
 
     async obtenerIncidenciaPorId(id) {
-        try {
-            const result = await sql`SELECT * FROM "INCIDENCIA" WHERE id = ${id}`;
-            
-            if (result.length === 0) {
-                throw new Error('Incidencia no encontrada.');
-            }
-            
-            const row = result[0];
-            return { id: row.id, nombre: row.nombre };
-        } catch (error) {
-            console.error('Error en obtenerIncidenciaPorId:', error);
-            if (error.code === 'ECONNREFUSED' || error.code === 'ETIMEDOUT') {
-                throw new Error('No se puede conectar a la base de datos. Verifica la conexión.');
-            }
-            throw new Error(`Error al obtener incidencia por ID: ${error.message}`);
-        }
+        const [result] = await pool.query('SELECT * FROM INCIDENCIA WHERE id = ?', [id]);
+        if (result.length === 0) throw new Error('Incidencia no encontrada.');
+        return result[0];
     }
 
     async obtenerIncidenciaPorNombre(nombre) {
-        try {
-            const result = await sql`SELECT * FROM "INCIDENCIA" WHERE nombre ILIKE ${'%' + nombre + '%'}`;
-            
-            if (result.length === 0) {
-                throw new Error('Incidencia no encontrada.');
-            }
-            
-            const row = result[0];
-            return { id: row.id, nombre: row.nombre };
-        } catch (error) {
-            console.error('Error en obtenerIncidenciaPorNombre:', error);
-            if (error.code === 'ECONNREFUSED' || error.code === 'ETIMEDOUT') {
-                throw new Error('No se puede conectar a la base de datos. Verifica la conexión.');
-            }
-            throw new Error(`Error al obtener incidencia por nombre: ${error.message}`);
-        }
+        const [result] = await pool.query('SELECT * FROM INCIDENCIA WHERE nombre LIKE ?', [`%${nombre}%`]);
+        if (result.length === 0) throw new Error('Incidencia no encontrada.');
+        return result;
     }
 
-    async actualizarIncidencia(id, datosActualizados) {
-        try {
-            const { nombre } = datosActualizados;
-            
-            if (!nombre) {
-                throw new Error('El campo nombre es obligatorio.');
-            }
-            
-            const result = await sql`
-                UPDATE "INCIDENCIA"
-                SET nombre = ${nombre}
-                WHERE id = ${id}
-                RETURNING id
-            `;
-            
-            if (!result || result.length === 0) {
-                throw new Error('Incidencia no encontrada para actualizar.');
-            }
-            
-            return { message: "Incidencia actualizada correctamente.", datos: datosActualizados };
-        } catch (error) {
-            console.error('Error en actualizarIncidencia:', error);
-            if (error.code === 'ECONNREFUSED' || error.code === 'ETIMEDOUT') {
-                throw new Error('No se puede conectar a la base de datos. Verifica la conexión.');
-            }
-            throw new Error(`Error al actualizar incidencia: ${error.message}`);
-        }
+    async actualizarIncidencia(id, datos) {
+        const sets = []; const values = [];
+        if (datos.nombre !== undefined) { sets.push('nombre = ?'); values.push(datos.nombre); }
+        if (sets.length === 0) throw new Error('No hay campos para actualizar.');
+        values.push(id);
+        const [result] = await pool.query(`UPDATE INCIDENCIA SET ${sets.join(', ')} WHERE id = ?`, values);
+        if (result.affectedRows === 0) throw new Error('Incidencia no encontrada.');
+        return { message: 'Incidencia actualizada correctamente.' };
     }
 
     async eliminarIncidencia(id) {
-        try {
-            const result = await sql`DELETE FROM "INCIDENCIA" WHERE id = ${id} RETURNING id`;
-            
-            if (!result || result.length === 0) {
-                throw new Error('Incidencia no encontrada para eliminar.');
-            }
-            
-            return { message: "Incidencia eliminada con éxito." };
-        } catch (error) {
-            console.error('Error en eliminarIncidencia:', error);
-            if (error.code === 'ECONNREFUSED' || error.code === 'ETIMEDOUT') {
-                throw new Error('No se puede conectar a la base de datos. Verifica la conexión.');
-            }
-            throw new Error(`Error al eliminar incidencia: ${error.message}`);
-        }
+        const [result] = await pool.query('DELETE FROM INCIDENCIA WHERE id = ?', [id]);
+        if (result.affectedRows === 0) throw new Error('Incidencia no encontrada.');
+        return { message: 'Incidencia eliminada con éxito.' };
     }
 }
 
